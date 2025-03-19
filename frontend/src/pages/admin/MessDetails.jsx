@@ -3,14 +3,14 @@ import { MdEdit } from "react-icons/md";
 
 const MessDetails = () => {
    const [messDetails, setMessDetails] = useState({
-      name: "Sunrise Mess",
-      owner: "Rahul Sharma",
+      name: "Buddy's Kitchen",
+      owner: "Vishwajeet Kale",
       afternoonTime: "12:00 PM - 2:30 PM",
       eveningTime: "7:00 PM - 9:30 PM",
-      totalMembers: 50,
-      address: "123, Street Name, City",
-      contact: "9876543210",
-      Meal_Price: 200,
+      totalMembers: 80,
+      address: "Ashta, Sangli",
+      contact: "9890353653",
+      Meal_Price: 60,
    });
    const [isEditable, setIsEditable] = useState(false);
 
