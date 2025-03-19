@@ -7,7 +7,6 @@ const MembersTable = () => {
   const [status, setStatus] = React.useState('not active')
   const navigate = useNavigate();
 
-
   const columns = [
     {
       title: 'Name',
@@ -16,42 +15,50 @@ const MembersTable = () => {
     },
     {
       title: 'Mobile Number',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'mobile',
+      key: 'mobile',
     },
     {
       title: 'Place',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'place',
+      key: 'place',
     },
     {
       title: 'Accomodation',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'accommodation',
+      key: 'accommodation',
     },
     {
       title: 'College',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'college',
+      key: 'college',
     },
   ];
 
   const data = [
     {
       key: '1',
-      name: 'Mike',
-      age: 32,
-      address: '10 Downing Street',
-      Accomodation: '10 Downing Street',
-      College: '10 Downing Street',
+      name: 'Rahul Sharma',
+      mobile: '9876543210',
+      place: 'Pune',
+      accommodation: 'Hostel',
+      college: 'MIT Pune',
     },
     {
       key: '2',
-      name: 'John',
-      age: 42,
-      address: '10 Downing Street',
-      Accomodation: '10 Downing Street',
-      College: '10 Downing Street',
+      name: 'Sneha Patil',
+      mobile: '9123456789',
+      place: 'Mumbai',
+      accommodation: 'PG',
+      college: 'IIT Bombay',
+    },
+    {
+      key: '3',
+      name: 'Amit Verma',
+      mobile: '9988776655',
+      place: 'Bangalore',
+      accommodation: 'Rented Apartment',
+      college: 'RV College of Engineering',
     },
   ];
 

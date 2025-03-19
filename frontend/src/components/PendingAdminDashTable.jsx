@@ -1,67 +1,75 @@
-import React from 'react'
 import { Table } from "antd";
+import React from 'react'
 
 const PendingAdminDashTable = () => {
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Mobile Number',
+      dataIndex: 'mobileNumber',
+      key: 'mobileNumber',
+    },
+    {
+      title: 'Place',
+      dataIndex: 'place',
+      key: 'place',
+    },
+    {
+      title: 'Accommodation',
+      dataIndex: 'accommodation',
+      key: 'accommodation',
+    },
+    {
+      title: 'College',
+      dataIndex: 'college',
+      key: 'college',
+    },
+    {
+      title: 'Pending Amount',
+      dataIndex: 'pendingAmount',
+      key: 'pendingAmount',
+    },
+  ];
 
-    const columns = [
-        {
-          title: 'Name',
-          dataIndex: 'name',
-          key: 'name',
-        },
-        {
-          title: 'Mobile Number',
-          dataIndex: 'age',
-          key: 'age',
-        },
-        {
-          title: 'Place',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: 'Accomodation',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: 'College',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: 'Pending Amount',
-          dataIndex: 'pending',
-          key: 'pending',
-        },
-      ];
+  const data = [
+    {
+      key: '1',
+      name: 'Rahul Sharma',
+      mobileNumber: '9876543210',
+      place: 'Pune',
+      accommodation: 'Hostel',
+      college: 'MIT Pune',
+      pendingAmount: 2000,
+    },
+    {
+      key: '2',
+      name: 'Sneha Patil',
+      mobileNumber: '9123456789',
+      place: 'Mumbai',
+      accommodation: 'PG',
+      college: 'IIT Bombay',
+      pendingAmount: 1500,
+    },
+    {
+      key: '3',
+      name: 'Amit Verma',
+      mobileNumber: '9988776655',
+      place: 'Bangalore',
+      accommodation: 'Rented Apartment',
+      college: 'RV College of Engineering',
+      pendingAmount: 1000,
+    },
+  ];
 
-      const data = [
-        {
-          key: '1',
-          name: 'Mike',
-          age: 32,
-          address: '10 Downing Street',
-          Accomodation: '10 Downing Street',
-          College: '10 Downing Street',
-          pending: 2000
-        },
-        {
-          key: '2',
-          name: 'John',
-          age: 42,
-          address: '10 Downing Street',
-          Accomodation: '10 Downing Street',
-          College: '10 Downing Street',
-          pending: 1500
-        },
-      ];
+  return (
+    <div className='w-full overflow-auto'>
+      <Table columns={columns} dataSource={data} />
+    </div>
+  );
+};
 
-    return (
-        <div>
-            <Table columns={columns} dataSource={data} />
-        </div>
-    )
-}
-
-export default PendingAdminDashTable
+export default PendingAdminDashTable;

@@ -20,7 +20,8 @@ const Dashboard = () => {
     nativePlace: '',
     address: '',
     status: 'Active',
-    college: ''
+    college: '',
+    password:''
   });
   const [qrData, setQrData] = useState("mobileNumber:123,password:123456");
   const [qrCodeUrl, setQrCodeUrl] = useState("");
@@ -158,9 +159,10 @@ const Dashboard = () => {
               <option value='Not Active'>Not Active</option>
             </select>
             <input className='w-full p-3 mb-4 border rounded-md' type='text' name='college' placeholder='College' value={memberData.college} onChange={handleInputChange} />
+            <input className='w-full p-3 mb-4 border rounded-md' type='password' name='password' placeholder='Password' value={memberData.password} onChange={handleInputChange} />
             <div className='flex justify-end items-center gap-2'>
               <button className='bg-gray-300 text-black px-4 py-2 rounded-md' onClick={() => setShowAddMember(false)}>Close</button>
-              <button className='bg-primary text-white px-4 py-2 rounded-md' onClick={handleSubmit}>Send Mail</button>
+              <button className='bg-primary text-white px-4 py-2 rounded-md' onClick={handleSubmit}>Save</button>
             </div>
           </div>
         </div>

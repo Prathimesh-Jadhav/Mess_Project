@@ -1,7 +1,7 @@
 import { Table } from "antd";
 import React from 'react'
 
-const MemberMealsTable = () => {
+const MemberMealsDashTable = () => {
   const columns = [
     {
       title: 'Date',
@@ -48,4 +48,4 @@ const MemberMealsTable = () => {
   );
 };
 
-export default MemberMealsTable;
+export default MemberMealsDashTable;

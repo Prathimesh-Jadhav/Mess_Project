@@ -13,6 +13,7 @@ import MemberDetails from './pages/admin/MemberDetails'
 import { useEffect, useState } from 'react'
 import logovideo from './assets/logovideo.mp4'
 import { MdKeyboardVoice } from 'react-icons/md'
+import ProfilePage from './pages/user/ProfilePage'
 
 function App() {
 
@@ -46,6 +47,7 @@ function App() {
               <Route path='admin/messDetails' element={<MessDetails />} />
               <Route path='user/mealDetails' element={<MealDetails />} />
               <Route path='admin/memberDetails/:id' element={<MemberDetails />} />
+              <Route path='user/profilepage' element={<ProfilePage />} />
             </Route>
           </Routes>
         </Router>

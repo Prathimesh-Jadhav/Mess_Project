@@ -1,56 +1,64 @@
-import React from "react";
 import { Table } from "antd";
+import React from 'react'
 
 const MembersAdminDashTable = () => {
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name", // Fixed: Lowercase for consistency
-      key: "name",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
-      title: "Mobile Number",
-      dataIndex: "mobileNumber", // Fixed: Matching data key
-      key: "mobileNumber",
+      title: 'Mobile Number',
+      dataIndex: 'mobileNumber',
+      key: 'mobileNumber',
     },
     {
-      title: "Place",
-      dataIndex: "place", // Fixed: Lowercase for consistency
-      key: "place",
+      title: 'Place',
+      dataIndex: 'place',
+      key: 'place',
     },
     {
-      title: "Accommodation",
-      dataIndex: "accommodation", // Fixed: Correct spelling
-      key: "accommodation",
+      title: 'Accommodation',
+      dataIndex: 'accommodation',
+      key: 'accommodation',
     },
     {
-      title: "College",
-      dataIndex: "college",
-      key: "college",
+      title: 'College',
+      dataIndex: 'college',
+      key: 'college',
     },
   ];
 
   const data = [
     {
-      key: "1",
-      name: "Mike",
-      mobileNumber: "9876543210", // Fixed: Matching dataIndex
-      place: "10 Downing Street",
-      accommodation: "10 Downing Street",
-      college: "10 Downing Street",
+      key: '1',
+      name: 'Rahul Sharma',
+      mobileNumber: '9876543210',
+      place: 'Pune',
+      accommodation: 'Hostel',
+      college: 'MIT Pune',
     },
     {
-      key: "2",
-      name: "John",
-      mobileNumber: "8765432109",
-      place: "10 Downing Street",
-      accommodation: "10 Downing Street",
-      college: "10 Downing Street",
+      key: '2',
+      name: 'Sneha Patil',
+      mobileNumber: '9123456789',
+      place: 'Mumbai',
+      accommodation: 'PG',
+      college: 'IIT Bombay',
+    },
+    {
+      key: '3',
+      name: 'Amit Verma',
+      mobileNumber: '9988776655',
+      place: 'Bangalore',
+      accommodation: 'Rented Apartment',
+      college: 'RV College of Engineering',
     },
   ];
 
   return (
-    <div>
+    <div className='w-full overflow-auto'>
       <Table columns={columns} dataSource={data} />
     </div>
   );

@@ -4,10 +4,6 @@ import MemberMealsTable from '../../components/MemberMealsTable'
 const MealDetails = () => {
   return (
     <div className='w-full min-h-[60vh] font-poppins px-[30px] mt-[80px]'>
-       {/* heading  */}
-        <div className='mt-6'>
-          <p className='text-[28px] font-semibold max-md:text-[24px]'>Meal Details</p>
-        </div>
 
         {/* table  */}
         <div className='border-[1px] border-gray-400 rounded-md mt-4 p-4 max-h-[400px]'>

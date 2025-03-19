@@ -6,6 +6,7 @@ import logo from '../assets/logo2.png'
 import { IoIosCloseCircle } from "react-icons/io";
 import { MessContext } from '../GlobalContext/Context'
 import { useNavigate } from 'react-router-dom'
+import buddy from "../assets/buddy'sKitchen.png"
 
 const Login = () => {
 
@@ -76,7 +77,7 @@ const Login = () => {
             <div className='min-w-[250px] max-w-[450px] border-gray-400 border-[1px] rounded-md p-2 z-10 bg-white shadow-lg'>
                <div className='flex flex-col items-center'>
                   <div className='w-[60px] h-[60px] rounded-full border-[1px] p-2'>
-                     <img src={logo} alt="" width={45} className='object-contain' />
+                     <img src={buddy} alt="" width={45} className='object-contain' />
                   </div>
                   <p className='text-subheading font-semibold text-primary'>DineFlow</p>
                </div>
@@ -92,7 +93,7 @@ const Login = () => {
                      <button className='w-full p-2 rounded-md bg-primary text-text font-medium hover:bg-primaryhover mt-1' onClick={handleSubmit}>Login</button>
                   </div>
                   <div>
-                     <p className='max-w-[200px] text-smallText text-gray-500 text-center mt-2'> To Register , contact- {123456789}</p>
+                     <p className='max-w-[200px] text-smallText text-gray-500 text-center mt-2'> To Register , contact- {9890353653}</p>
                   </div>
                </div>
             </div>

@@ -6,6 +6,7 @@ import KeyStatsDiv from '../../components/KeyStats';
 import { MessContext } from '../../GlobalContext/Context';
 import MemberMealsTable from '../../components/MemberMealsTable';
 import { FaUtensils, FaSun, FaMoon } from 'react-icons/fa'; // Icons for meal timings
+import MemberMealsDashTable from '../../components/MemberMealsDashTable';
 
 const Dashboard = () => {
   const { role } = useContext(MessContext);
@@ -127,7 +128,7 @@ const Dashboard = () => {
           <p className='text-[24px] font-semibold'>Your Meals in this Month</p>
           <div className='mt-4 overflow-x-auto '> 
 
-          <MemberMealsTable />
+          <MemberMealsDashTable />
           </div>
         </div>
       </div>
