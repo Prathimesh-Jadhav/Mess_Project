@@ -1,100 +1,59 @@
-import React from 'react'
-// import { Table } from '@radix-ui/themes/dist/cjs/index.js'
+import React from "react";
 import { Table } from "antd";
 
 const MembersAdminDashTable = () => {
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name", // Fixed: Lowercase for consistency
+      key: "name",
+    },
+    {
+      title: "Mobile Number",
+      dataIndex: "mobileNumber", // Fixed: Matching data key
+      key: "mobileNumber",
+    },
+    {
+      title: "Place",
+      dataIndex: "place", // Fixed: Lowercase for consistency
+      key: "place",
+    },
+    {
+      title: "Accommodation",
+      dataIndex: "accommodation", // Fixed: Correct spelling
+      key: "accommodation",
+    },
+    {
+      title: "College",
+      dataIndex: "college",
+      key: "college",
+    },
+  ];
 
-    const columns = [
-        {
-          title: 'Name',
-          dataIndex: 'name',
-          key: 'name',
-        },
-        {
-          title: 'Mobile Number',
-          dataIndex: 'age',
-          key: 'age',
-        },
-        {
-          title: 'Place',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: 'Accomodation',
-          dataIndex: 'address',
-          key: 'address',
-        },
-        {
-          title: 'College',
-          dataIndex: 'address',
-          key: 'address',
-        },
-      ];
+  const data = [
+    {
+      key: "1",
+      name: "Mike",
+      mobileNumber: "9876543210", // Fixed: Matching dataIndex
+      place: "10 Downing Street",
+      accommodation: "10 Downing Street",
+      college: "10 Downing Street",
+    },
+    {
+      key: "2",
+      name: "John",
+      mobileNumber: "8765432109",
+      place: "10 Downing Street",
+      accommodation: "10 Downing Street",
+      college: "10 Downing Street",
+    },
+  ];
 
-      const data = [
-        {
-          key: '1',
-          name: 'Mike',
-          age: 32,
-          address: '10 Downing Street',
-          Accomodation: '10 Downing Street',
-          College: '10 Downing Street',
-        },
-        {
-          key: '2',
-          name: 'John',
-          age: 42,
-          address: '10 Downing Street',
-          Accomodation: '10 Downing Street',
-          College: '10 Downing Street',
-        },
-      ];
+  return (
+    <div>
+      <Table columns={columns} dataSource={data} />
+    </div>
+  );
+};
 
-    return (
-        <div>
-            {/* <Table.Root>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Mobile Number</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Place</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Accomodation</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>College</Table.ColumnHeaderCell>
-                    </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                    <Table.Row>
-                        <Table.RowHeaderCell>Danilo Sousa</Table.RowHeaderCell>
-                        <Table.Cell>danilo@example.com</Table.Cell>
-                        <Table.Cell>Developer</Table.Cell>
-                        <Table.Cell>Developer</Table.Cell>
-                        <Table.Cell>Developer</Table.Cell>
-                    </Table.Row>
-
-                    <Table.Row>
-                        <Table.RowHeaderCell>Zahra Ambessa</Table.RowHeaderCell>
-                        <Table.Cell>zahra@example.com</Table.Cell>
-                        <Table.Cell>Admin</Table.Cell>
-                        <Table.Cell>Admin</Table.Cell>
-                        <Table.Cell>Admin</Table.Cell>
-                    </Table.Row>
-
-                    <Table.Row>
-                        <Table.RowHeaderCell>Jasper Eriksson</Table.RowHeaderCell>
-                        <Table.Cell>jasper@example.com</Table.Cell>
-                        <Table.Cell>Developer</Table.Cell>
-                        <Table.Cell>Developer</Table.Cell>
-                        <Table.Cell>Developer</Table.Cell>
-                    </Table.Row>
-                </Table.Body>
-            </Table.Root> */}
-
-            <Table columns={columns} dataSource={data} />
-
-        </div>
-    )
-}
-
-export default MembersAdminDashTable
+export default MembersAdminDashTable;

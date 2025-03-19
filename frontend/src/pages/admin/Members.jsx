@@ -34,9 +34,9 @@ const Members = () => {
             {/* Members Table */}
             <div className='border-[1px] rounded-md p-4 mt-10'>
                 {/* Table Heading */}
-                <div className='w-full flex justify-between items-center'>
+                <div className='w-full flex justify-between items-center gap-3'>
                     <div className='w-full'>
-                        <div className='text-subheading font-semibold'>Members</div>
+                        <div className='text-subheading font-semibold max-md:text-[20px]'>Members</div>
                         <p className='text-smallText'>Members of Mess</p>
                     </div>
                     <div className='text-bodyText'>

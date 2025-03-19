@@ -29,6 +29,11 @@ const PendingAdminDashTable = () => {
           dataIndex: 'address',
           key: 'address',
         },
+        {
+          title: 'Pending Amount',
+          dataIndex: 'pending',
+          key: 'pending',
+        },
       ];
 
       const data = [
@@ -39,6 +44,7 @@ const PendingAdminDashTable = () => {
           address: '10 Downing Street',
           Accomodation: '10 Downing Street',
           College: '10 Downing Street',
+          pending: 2000
         },
         {
           key: '2',
@@ -47,6 +53,7 @@ const PendingAdminDashTable = () => {
           address: '10 Downing Street',
           Accomodation: '10 Downing Street',
           College: '10 Downing Street',
+          pending: 1500
         },
       ];
 
