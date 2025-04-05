@@ -32,11 +32,6 @@ const MemberMealsDashTable = ({ memberMeals }) => {
       dataIndex: 'mealsSkipped',
       key: 'mealsSkipped',
     },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-    },
   ];
 
   return (
