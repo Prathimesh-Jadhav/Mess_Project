@@ -3,11 +3,12 @@ const Meals = require("../models/mealsModel");
 const Payments = require("../models/paymentsModel");
 const messModel = require("../models/messModel");
 
-async function processMonthlyPayments(req,res) {
+async function processMonthlyPayments(req, res) {
+    let paymentsArray = [];
     try {
         //get price 
         const mess = await messModel.find({});
-        if(!mess){
+        if (!mess) {
             return res.status(404).json({ message: 'Error fetching mess details', error, success: false });
         }
 
@@ -33,8 +34,8 @@ async function processMonthlyPayments(req,res) {
             // Check if payment is already recorded for this range
             const existingPayment = await Payments.findOne({
                 mobileNumber,
-                startDate:startDate,
-                endDate:endDate,
+                startDate: startDate,
+                endDate: endDate,
             });
 
             if (existingPayment) {
@@ -77,30 +78,37 @@ async function processMonthlyPayments(req,res) {
             }
 
             // Calculate amounts
-            const totalAmount =( mealsHadForPayment+skippedForPayments*8 )* pricePerMeal;
+            const totalAmount = (mealsHadForPayment + skippedForPayments * 8) * pricePerMeal;
             const deductedAmount = skippedForPayments * deductionPerSkippedMeal;
-            const finalAmount = totalAmount -deductedAmount;
+            const finalAmount = totalAmount - deductedAmount;
 
 
             // Save payment record
-            await Payments.create({
-                mobileNumber,
-                totalMealsHad: mealsHadForPayment+skippedForPayments*8,
-                startDate: startDate,
-                totalAmount: totalAmount,
-                endDate: endDate,
-                deductedAmount,
-                mealsSkipped: skippedForPayments,
-                amountToPay: finalAmount,
-                Due: finalAmount,
-                paidAmount: 0,
-                mealRate: mess[0].mealRate,
-            });
+            paymentsArray.push(
+                {
+                    mobileNumber,
+                    totalMealsHad: mealsHadForPayment + skippedForPayments * 8,
+                    startDate: startDate,
+                    totalAmount: totalAmount,
+                    endDate: endDate,
+                    deductedAmount,
+                    mealsSkipped: skippedForPayments,
+                    amountToPay: finalAmount,
+                    Due: finalAmount,
+                    paidAmount: 0,
+                    mealRate: mess[0].mealRate,
+                }
+            )
 
-            console.log(`Payment recorded for ${mobileNumber} - Final Amount: ₹${finalAmount}`);
         }
 
-        return res.status(200).json({message:"Monthly payments processed successfully",success:true}); // Return all processed payments in the required format
+        if (paymentsArray.length > 0) {
+            await Payments.insertMany(paymentsArray); // Save all payments in one go
+        }
+
+        console.log("Payments processed successfully:", paymentsArray);
+
+        return res.status(200).json({ message: "Monthly payments processed successfully", success: true }); // Return all processed payments in the required format
 
     } catch (error) {
         console.error("Error processing payments:", error);
@@ -109,4 +117,4 @@ async function processMonthlyPayments(req,res) {
 }
 
 // Run this function daily using a cron job
-module.exports = {processMonthlyPayments};
+module.exports = { processMonthlyPayments };
