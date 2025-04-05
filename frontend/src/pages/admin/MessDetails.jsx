@@ -80,10 +80,10 @@ const MessDetails = () => {
             <div className="w-full py-2 px-4 flex flex-col gap-4 mt-6 max-h-[450px] overflow-auto relative">
                {/* Form fields */}
                {Object.keys(messDetails ?? {}).length > 0 ? Object.keys(messDetails).map((key) => (
-                  key != '_id' && <div key={key}>
+                  key != '_id' && key != '__v' && <div key={key}>
                      <p className="text-bodyText">{(key.charAt(0).toUpperCase() + key.slice(1)).replace(/_/g, " ")}</p>
                      <input
-                        type={key === "totalMembers" || key === "Meal_Price" ? "number" : "text"}
+                        type={key === "totalMembers" || key === "mealRate" ? "number" : "text"}
                         name={key} // FIX: Use the original key instead of modifying it
                         value={messDetails[key] || ""} // Ensure value doesn't break on undefined
                         onChange={handleChange}

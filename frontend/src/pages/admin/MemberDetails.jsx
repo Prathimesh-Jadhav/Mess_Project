@@ -48,7 +48,7 @@ const MemberDetails = () => {
                 // Set the most recent bill as default
                 if (response.data.data.length > 0) {
                     setSelectedMonth(`${sortedBills[0]?.startDate?.split('T')[0]} - ${sortedBills[0]?.endDate?.split('T')[0]}`);
-                    setCurrentBill(response.data.data[0]);
+                    setCurrentBill(sortedBills[0]);
                 }
             }
         } catch (error) {
@@ -101,10 +101,11 @@ const MemberDetails = () => {
 
     const activateSubscription = async () => {
         try {
-            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/members/updateMembers`, { mobileNumber: id, status: 'active', subscibedAt: new Date() })
+            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/members/updateMembers`, { mobileNumber: id, status: 'Active', subscibedAt: new Date().toISOString().split('T')[0] });
             if (response.data.success) {
                 toast.success('subscription activated successfully');
                 setSubscriptionStatus('Active')
+                getMemberDetails();
             }
         }
         catch (err) {

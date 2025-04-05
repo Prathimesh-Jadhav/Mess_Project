@@ -23,7 +23,7 @@ const SetMenu = () => {
         }
       });
       if(response.data.success){
-        toast.success(response.data.success);
+        toast.success(response.data.message);
       }
     }
     catch (err) {
@@ -35,7 +35,6 @@ const SetMenu = () => {
       curry: '',
       specialItems: ''
     })
-    alert('Menu saved successfully!');
   };
 
   return (

@@ -34,11 +34,6 @@ const MemberMealsTable = ({ userMealDetails }) => {
       dataIndex: 'mealsSkipped',
       key: 'mealsSkipped',
     },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-    },
   ];
 
   return (

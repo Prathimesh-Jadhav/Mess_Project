@@ -18,14 +18,9 @@ const MembersTable = ({ members }) => {
       key: 'mobileNumber',
     },
     {
-      title: 'Total Meals',
+      title: 'Total Meals (Current Month)',
       dataIndex: 'totalMealsHad',
       key: 'totalMealsHad',
-    },
-    {
-      title: 'Current Month',
-      dataIndex: 'currentMonth',
-      key: 'currentMonth',
     },
     {
       title: 'Total Due',
