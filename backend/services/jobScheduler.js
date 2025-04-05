@@ -20,8 +20,9 @@ const startScheduler = () => {
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
             yesterday.setHours(0, 0, 0, 0); // Normalize to start of the day
+            const yesterdayString = yesterday.toISOString().split("T")[0]; // Format to YYYY-MM-DD
 
-            const meals = await Meals.find({ date: yesterday });
+            const meals = await Meals.find({ date: yesterdayString });
 
             for (let meal of meals) {
                 if (meal.totalMealsHad < 2) {
