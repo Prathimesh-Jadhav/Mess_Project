@@ -20,7 +20,7 @@ async function processMonthlyPayments(req, res) {
 
         // Get members who have completed 30 days
         const members = await Member.find({
-            subscibedAt: { $lte: new Date(today.setDate(today.getDate() - 30)) }
+            subscibedAt: { $lte: new Date(today.setDate(today.getDate() - 1)) }
         });
 
         for (let member of members) {
@@ -81,6 +81,16 @@ async function processMonthlyPayments(req, res) {
             const totalAmount = (mealsHadForPayment + skippedForPayments * 8) * pricePerMeal;
             const deductedAmount = skippedForPayments * deductionPerSkippedMeal;
             const finalAmount = totalAmount - deductedAmount;
+
+            const memberUpdate = await Member.findOneAndUpdate(
+                { mobileNumber },
+                { $set: { status: "Subscription Completed" } },
+                { new: true }
+            );
+
+            if(!memberUpdate){
+                return res.status(404).json({ message: 'Error updating member status', error, success: false });
+            }
 
 
             // Save payment record

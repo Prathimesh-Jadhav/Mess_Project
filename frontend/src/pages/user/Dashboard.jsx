@@ -76,7 +76,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (
       mealDetails?.totalMealsHad !== undefined &&
-      memberDetails[0]?.status &&
+      memberDetails[0]?.status === 'Active' &&
       mealRate !== undefined
     ) {
       updateKeyStats();
