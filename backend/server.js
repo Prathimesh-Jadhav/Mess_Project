@@ -32,10 +32,14 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({origin:'*'}))
 
+//job Scheduler
+const { startScheduler } = require('./services/jobScheduler')
+
 //connect to db:
 mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.log("Connected to MongoDB");
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  startScheduler(); // Start the job scheduler
 }).catch((error) => {
   console.error("Error connecting to MongoDB:", error);
 });
@@ -49,6 +53,8 @@ const todaysMenu = require("./routes/todaysMenu");
 const paymentsRouter = require("./routes/paymentsRoute");
 
 
+
+
 app.use("/api/messDetails", messDetailsRoutes);
 app.use('/api/members',memberRoutes)
 app.use('/api/users',userRoutes)
@@ -56,9 +62,6 @@ app.use('/api/meal',mealsRoutes)
 app.use('/api/menu',todaysMenu)
 app.use('/api/payments',paymentsRouter)
 
-cron.schedule("0 0 * * *", () => {
-  console.log("Running daily payment processing...");
-  processMonthlyPayments();
-});
+
 
 
