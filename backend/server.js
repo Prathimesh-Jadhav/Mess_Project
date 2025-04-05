@@ -30,7 +30,7 @@ app.use(limiter);
 
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({origin:'*'}))
+app.use(cors({origin:'https://mess-project.vercel.app'}))
 
 //job Scheduler
 const { startScheduler } = require('./services/jobScheduler')
