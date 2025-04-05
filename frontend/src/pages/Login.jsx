@@ -15,8 +15,9 @@ const Login = () => {
    const [forgotPasswordModal, setForgotPasswordModal] = React.useState(false)
    const [forgotpasswordChange, setForgotPasswordChange] = React.useState({})
    const [memberDetails, setMemberDetails] = React.useState({})
+   const [loading, setLoading] = React.useState(false)
 
-   const { setIsLogin, setRole, isLogin, role,setUserSubscriptionStatus } = useContext(MessContext)
+   const { setIsLogin, setRole, isLogin, role, setUserSubscriptionStatus } = useContext(MessContext)
    const navigate = useNavigate();
 
    const handleChange = (e) => {
@@ -54,6 +55,7 @@ const Login = () => {
    }
 
    const handleSubmit = async () => {
+      setLoading(true);
       try {
          const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/login`, loginData, {
             headers: {
@@ -77,7 +79,6 @@ const Login = () => {
                return;
             }
 
-            // If user role is 'user', fetch member details
             const memberResponse = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/members/getMemberDetails`, {
                mobileNumber: resData.mobileNumber
             }, {
@@ -100,6 +101,8 @@ const Login = () => {
       } catch (err) {
          console.error(err);
          toast.error('Error in login');
+      } finally {
+         setLoading(false);
       }
    }
 
@@ -108,24 +111,24 @@ const Login = () => {
    }
 
    const handleForgotPasswordChangeSubmit = async () => {
-      if(forgotpasswordChange.mobileNumber === undefined) {
+      if (forgotpasswordChange.mobileNumber === undefined) {
          toast.error('Please fill all the fields')
       }
 
-      try{
+      try {
          const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/forgot-password`, forgotpasswordChange, {
             headers: {
                'Content-Type': 'application/json'
             }
          })
-         if(response.data.success) {
+         if (response.data.success) {
             toast.success('Reset Mail sent successfully');
          }
          else {
             toast.error('Failed to send Mail');
          }
       }
-      catch(err) {
+      catch (err) {
          console.error(err);
          toast.error('Error in sending mail');
       }
@@ -177,9 +180,15 @@ const Login = () => {
                      Forgot Password?
                   </p>
                   <button
-                     className='w-full p-2 rounded-md bg-primary text-text font-medium hover:bg-primaryhover mt-1'
-                     onClick={handleSubmit}>
-                     Login
+                     className='w-full p-2 rounded-md bg-primary text-text font-medium hover:bg-primaryhover mt-1 flex items-center justify-center gap-2'
+                     onClick={handleSubmit}
+                     disabled={loading}
+                  >
+                     {loading ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                     ) : (
+                        'Login'
+                     )}
                   </button>
                   <p className='max-w-[200px] text-smallText text-gray-500 text-center mt-2'>
                      To Register, contact - 9890353653
