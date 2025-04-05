@@ -55,7 +55,7 @@ async function processMonthlyPaymentsJob() {
             let totalMealsSkipped = 0;
             let consecutiveSkipped = 0;
             let skippedForPayments = 0;
-            let mealsHadForPayment = 0;
+            let mealsHadForPayment = 60;
 
             for (let meal of meals) {
                 totalMealsHad += meal.totalMealsHad;
@@ -65,8 +65,7 @@ async function processMonthlyPaymentsJob() {
                 // Count consecutive skipped meals
                 if (meal.mealsSkipped > 1) {
                     consecutiveSkipped += meal.mealsSkipped;
-                } else {
-                    mealsHadForPayment += meal.mealsSkipped + consecutiveSkipped; // Count meals had
+                } else {// Count meals had
                     consecutiveSkipped = 0; // Reset counter if a meal is had
                 }
 
@@ -78,9 +77,9 @@ async function processMonthlyPaymentsJob() {
             }
 
             // Calculate amounts
-            const totalAmount = (mealsHadForPayment + skippedForPayments * 8) * Number(pricePerMeal);
+            const totalAmount = mealsHadForPayment * Number(pricePerMeal);
 
-            const deductedAmount = skippedForPayments * Number(deductionPerSkippedMeal);
+            const deductedAmount = skippedForPayments * Number(deductionPerSkippedMeal)*2;
             const finalAmount = totalAmount - deductedAmount;
 
             const memberUpdate = await Member.findOneAndUpdate(
@@ -97,7 +96,7 @@ async function processMonthlyPaymentsJob() {
             paymentsArray.push(
                 {
                     mobileNumber,
-                    totalMealsHad: mealsHadForPayment + skippedForPayments * 8,
+                    totalMealsHad: mealsHadForPayment,
                     startDate: startDate,
                     totalAmount: totalAmount,
                     endDate: endDate,
