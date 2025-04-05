@@ -3,24 +3,23 @@ const Meals = require("../models/mealsModel");
 const Payments = require("../models/paymentsModel");
 const messModel = require("../models/messModel");
 
-async function processMonthlyPayments(req, res) {
+async function processMonthlyPaymentsJob() {
     let paymentsArray = [];
     try {
         //get price 
         const mess = await messModel.find({});
         if (!mess) {
-            return res.status(404).json({ message: 'Error fetching mess details', error, success: false });
+            return { message: "Mess not found",success:false };
         }
 
-        const pricePerMeal = mess[0].mealPrice;
-        const deductionPerSkippedMeal = mess[0].mealPrice;
-
+        const pricePerMeal = mess[0].mealRate;
+        const deductionPerSkippedMeal = mess[0].mealRate;
         const today = new Date();
         const monthRange = today.toLocaleString("default", { month: "long", year: "numeric" }); // "April 2025"
 
         // Get members who have completed 30 days
         const members = await Member.find({
-            subscibedAt: { $lte: new Date(today.setDate(today.getDate() - 1)) }
+            subscibedAt: { $lte: new Date(today.setDate(today.getDate() - 30)) }
         });
 
         for (let member of members) {
@@ -56,6 +55,7 @@ async function processMonthlyPayments(req, res) {
             let totalMealsSkipped = 0;
             let consecutiveSkipped = 0;
             let skippedForPayments = 0;
+            let mealsHadForPayment = 0;
 
             for (let meal of meals) {
                 totalMealsHad += meal.totalMealsHad;
@@ -78,20 +78,20 @@ async function processMonthlyPayments(req, res) {
             }
 
             // Calculate amounts
-            const totalAmount = (mealsHadForPayment + skippedForPayments * 8) * pricePerMeal;
-            const deductedAmount = skippedForPayments * deductionPerSkippedMeal;
+            const totalAmount = (mealsHadForPayment + skippedForPayments * 8) * Number(pricePerMeal);
+
+            const deductedAmount = skippedForPayments * Number(deductionPerSkippedMeal);
             const finalAmount = totalAmount - deductedAmount;
 
             const memberUpdate = await Member.findOneAndUpdate(
                 { mobileNumber },
-                { $set: { status: "Subscription Completed" } },
+                {status:'Subscription Expired'},
                 { new: true }
             );
 
             if(!memberUpdate){
-                return res.status(404).json({ message: 'Error updating member status', error, success: false });
+                return { message: "Error updating member",success:false };
             }
-
 
             // Save payment record
             paymentsArray.push(
@@ -118,7 +118,7 @@ async function processMonthlyPayments(req, res) {
 
         console.log("Payments processed successfully:", paymentsArray);
 
-        return res.status(200).json({ message: "Monthly payments processed successfully", success: true }); // Return all processed payments in the required format
+        return { message: "Payments processed successfully", success: true };
 
     } catch (error) {
         console.error("Error processing payments:", error);
@@ -127,4 +127,4 @@ async function processMonthlyPayments(req, res) {
 }
 
 // Run this function daily using a cron job
-module.exports = { processMonthlyPayments };
+module.exports = { processMonthlyPaymentsJob };

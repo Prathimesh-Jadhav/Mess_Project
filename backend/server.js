@@ -53,8 +53,6 @@ const todaysMenu = require("./routes/todaysMenu");
 const paymentsRouter = require("./routes/paymentsRoute");
 
 
-
-
 app.use("/api/messDetails", messDetailsRoutes);
 app.use('/api/members',memberRoutes)
 app.use('/api/users',userRoutes)

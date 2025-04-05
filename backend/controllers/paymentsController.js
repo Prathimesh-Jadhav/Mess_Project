@@ -1,5 +1,6 @@
 const paymentsModel = require('../models/paymentsModel');
 const mealsModel =  require('../models/mealsModel');
+const { processMonthlyPaymentsJob } = require('../services/paymentsProcessor');
 
 const getPaymentDetails = async (req, res) => {
     const { mobileNumber } = req.body;
@@ -86,6 +87,22 @@ const getDuePayments = async (req, res) => {
     }
 }
 
+const processMonthlyPayments = async (req, res) => {
+    try {
+        const result = await processMonthlyPaymentsJob();
+
+        if(result.data.success === false){
+            return res.status(500).json({ message: result.data.message, success: false });
+        }
+
+        return res.status(200).json({ message: result.data.messsage, success: true });
+    } catch (error) {
+        return res.status(500).json({ message: "Error processing payments", error });
+    }
+};
 
 
-module.exports = { getPaymentDetails,handleAmountPaid,getPaymentHistory,getDuePayments };
+
+
+
+module.exports = { getPaymentDetails,handleAmountPaid,getPaymentHistory,getDuePayments,processMonthlyPayments };

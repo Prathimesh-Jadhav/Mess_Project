@@ -1,17 +1,18 @@
 const cron = require("node-cron");
-const { processMonthlyPayments } = require("./paymentsProcessor");
+const { processMonthlyPaymentsJob } = require("./paymentsProcessor");
 const Meals = require("../models/mealsModel");
 
 const startScheduler = () => {
     // Schedule the job to run at 12:00 AM every night
-    cron.schedule("0 0 * * *", async () => {
+    cron.schedule("0 1 * * *", async () => {
         try {
-            console.log("Running monthly payment processing...");
-            await processMonthlyPayments();
+            console.log("Running payment processing at 1:00 AM daily...");
+            await processMonthlyPaymentsJob();
         } catch (error) {
-            console.error("Error processing monthly payments:", error);
+            console.error("Error processing payments from CRON:", error);
         }
     });
+    
 
     cron.schedule("0 0 * * *", async () => {
         try {
