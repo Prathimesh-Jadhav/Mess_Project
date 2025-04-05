@@ -14,8 +14,9 @@ const Login = () => {
    const [loginData, setLoginData] = React.useState({})
    const [forgotPasswordModal, setForgotPasswordModal] = React.useState(false)
    const [forgotpasswordChange, setForgotPasswordChange] = React.useState({})
+   const [memberDetails, setMemberDetails] = React.useState({})
 
-   const { setIsLogin, setRole, isLogin, role } = useContext(MessContext)
+   const { setIsLogin, setRole, isLogin, role,setUserSubscriptionStatus } = useContext(MessContext)
    const navigate = useNavigate();
 
    const handleChange = (e) => {
@@ -33,7 +34,24 @@ const Login = () => {
             navigate('/');
          }
       }
+
+      getMemberDetails();
    }, [isLogin, role, navigate])
+
+   const getMemberDetails = async () => {
+      try {
+         const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/members/getMemberDetails`, { mobileNumber: sessionStorage.getItem('mobileNumber') });
+         if (response.data.success) {
+            setMemberDetails(response.data.data);
+            setUserSubscriptionStatus(response.data.data[0]?.status);
+         }
+         else {
+            toast.error(response.data.message);
+         }
+      } catch (error) {
+         console.error('Error fetching member details:', error);
+      }
+   }
 
    const handleSubmit = async () => {
       try {
@@ -132,7 +150,7 @@ const Login = () => {
                   <div className='w-[60px] h-[60px] rounded-full border-[1px] p-2'>
                      <img src={buddy} alt="" width={45} className='object-contain' />
                   </div>
-                  <p className='text-subheading font-semibold text-primary'>DineFlow</p>
+                  <p className='text-[20px] font-semibold text-primary mt-1'>Buddy's Kitchen</p>
                </div>
 
                <div className='flex flex-col gap-2 mt-3 text-bodyText'>

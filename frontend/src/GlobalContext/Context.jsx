@@ -7,6 +7,7 @@ const Context = ({children}) => {
   const [adminDetails, setAdminDetails] = useState({})
   const [isLogin, setIsLogin] = useState(sessionStorage.getItem('token') !=''|| false);
   const [role, setRole] = useState(sessionStorage.getItem('role'));
+  const [userSubscriptionStatus, setUserSubscriptionStatus] = useState(false);
 
   return (
     <MessContext.Provider value={{
@@ -17,7 +18,9 @@ const Context = ({children}) => {
       isLogin,
       setIsLogin,
       role,
-      setRole
+      setRole,
+      userSubscriptionStatus,
+      setUserSubscriptionStatus
     }}>
        {children}
     </MessContext.Provider>

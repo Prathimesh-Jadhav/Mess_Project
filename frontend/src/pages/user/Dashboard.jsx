@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
   const [openQR, setOpenQR] = useState(false);
   const [qrResult, setQrResult] = useState('');
-  const { role, adminDetails, mealRate,setIsLogin } = useContext(MessContext);
+  const { role, adminDetails, mealRate,setIsLogin,userSubscriptionStatus } = useContext(MessContext);
   const [mealDetails, setMealDetails] = useState([]);
   const [stats, setStats] = useState([]);
   const [memberDetails, setMemberDetails] = useState({});
@@ -39,6 +39,14 @@ const Dashboard = () => {
             toast.error('Please login first')
             return;
           }
+
+          console.log('userSubscriptionStatus',userSubscriptionStatus)
+
+          if(userSubscriptionStatus != 'Active'){
+            toast.error('Your subscription is not active');
+            return;
+          }
+          
           setQrResult(decodedText);
           setOpenQR(false);
           alert(`Scanned QR Code: ${decodedText}`);
@@ -76,7 +84,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (
       mealDetails?.totalMealsHad !== undefined &&
-      memberDetails[0]?.status === 'Active' &&
+      memberDetails[0]?.status &&
       mealRate !== undefined
     ) {
       updateKeyStats();

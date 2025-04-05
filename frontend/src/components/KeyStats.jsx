@@ -8,7 +8,7 @@ const KeyStats = ({heading, value, Logo,tag}) => {
                 <div>{Logo && <Logo size={18} color='#333333'/>}</div>
             </div> 
             <div className='mt-2'>
-                <div className={`text-subheading font-semibold ${value=='Active'&&'text-green-600'}`}>{value}</div>
+                <div className={`text-subheading font-semibold ${value=='Active'&&'text-green-600'} ${value=='Subscription Completed'&&'text-red-600'}`}>{value}</div>
                 <div className='text-smallText text-gray-500'>{tag}</div>
             </div>
         </div>
