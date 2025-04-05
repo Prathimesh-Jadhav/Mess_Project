@@ -43,8 +43,8 @@ const registerMember = async (req, res) => {
             name,
             mobileNumber,
             status,
-            joinDate: Date.now(), // Today's date
-            subscibedAt: Date.now(), // Today's date
+            joinDate: new Date().toISOString().split("T")[0], // Today's date
+            subscibedAt: new Date().toISOString().split("T")[0], // Today's date
             college,
             permanentAddress,
             hostelAddress,

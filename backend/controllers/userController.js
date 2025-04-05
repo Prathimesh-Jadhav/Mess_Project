@@ -7,9 +7,7 @@ const nodemailer = require("nodemailer");
 const login = async (req, res) => {
     try {
         const { mobileNumber, password } = req.body;
-        console.log(mobileNumber,password)
         const user = await userModel.findOne({ mobileNumber });
-        console.log('login:',user)
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -26,9 +24,9 @@ const login = async (req, res) => {
 
 const addAdmin = async (req, res) => {
     try {
-        const { name, mobileNumber, password } = req.body;
+        const { name, mobileNumber, password,email } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await userModel.create({ name, mobileNumber, password: hashedPassword, role:'admin' });
+        const user = await userModel.create({ name, mobileNumber, password: hashedPassword, role:'admin',email });
         return res.status(201).json({ message: "Admin created successfully", user });
     } catch (error) {
         return res.status(500).json({ message: "Internal server error", error });

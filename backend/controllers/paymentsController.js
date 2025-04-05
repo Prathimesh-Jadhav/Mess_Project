@@ -15,15 +15,11 @@ const getPaymentDetails = async (req, res) => {
     }
 };
 
-function convertToISO(dateString) {
-    const date = new Date(dateString);
-    return date.toISOString().replace("Z", "+00:00");
-}
 
 const handleAmountPaid = async (req, res) => {
     const { mobileNumber, startDate, endDate, paidAmount, amount } = req.body;
-    const startingDate = convertToISO(startDate);
-    const endingDate = convertToISO(endDate);
+    const startingDate = new Date(startDate).toISOString().split('T')[0];
+    const endingDate = new Date(endDate).toISOString().split('T')[0];
     const Due = amount - Number(paidAmount);
 
     try {
@@ -49,7 +45,7 @@ const handleAmountPaid = async (req, res) => {
         if (Due === 0) {
             await mealsModel.deleteMany({
                 mobileNumber,
-                date: { $gte: new Date(startingDate), $lte: new Date(endingDate) }
+                date: { $gte: new Date(startingDate).toISOString().split('T')[0], $lte: new Date(endingDate).toISOString().split('T')[0] }
             });
         }
 

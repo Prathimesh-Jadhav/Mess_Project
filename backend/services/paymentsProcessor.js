@@ -19,7 +19,7 @@ async function processMonthlyPaymentsJob() {
 
         // Get members who have completed 30 days
         const members = await Member.find({
-            subscibedAt: { $lte: new Date(today.setDate(today.getDate() - 30)) }
+            subscibedAt: { $lte: new Date(today.setDate(today.getDate() - 30)).toISOString().split("T")[0] },
         });
 
         for (let member of members) {
@@ -33,8 +33,8 @@ async function processMonthlyPaymentsJob() {
             // Check if payment is already recorded for this range
             const existingPayment = await Payments.findOne({
                 mobileNumber,
-                startDate: startDate,
-                endDate: endDate,
+                startDate: startDate.toISOString().split("T")[0],
+                endDate: endDate.toISOString().split("T")[0],
             });
 
             if (existingPayment) {
@@ -60,7 +60,6 @@ async function processMonthlyPaymentsJob() {
             for (let meal of meals) {
                 totalMealsHad += meal.totalMealsHad;
                 totalMealsSkipped += meal.mealsSkipped;
-                mealsHadForPayment += meal.totalMealsHad;
 
                 // Count consecutive skipped meals
                 if (meal.mealsSkipped > 1) {
@@ -97,9 +96,9 @@ async function processMonthlyPaymentsJob() {
                 {
                     mobileNumber,
                     totalMealsHad: mealsHadForPayment,
-                    startDate: startDate,
+                    startDate: startDate.toISOString().split("T")[0],
                     totalAmount: totalAmount,
-                    endDate: endDate,
+                    endDate: endDate.toISOString().split("T")[0],
                     deductedAmount,
                     mealsSkipped: skippedForPayments,
                     amountToPay: finalAmount,

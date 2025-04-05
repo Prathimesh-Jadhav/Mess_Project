@@ -10,7 +10,7 @@ const messSchema = new mongoose.Schema({
         required: true,
     },
     mealRate: {
-        type: String,
+        type: Number,
         required: true,
     },
     lunchTiming:{
@@ -23,10 +23,6 @@ const messSchema = new mongoose.Schema({
     },
     contact:{
         type: String,
-        required: true,
-    },
-    mealPrice:{
-        type: Number,
         required: true,
     },
     address:{

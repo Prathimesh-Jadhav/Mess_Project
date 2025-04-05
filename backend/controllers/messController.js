@@ -3,9 +3,9 @@ const userModel = require("../models/userModel");
 
 
 const addMess = async (req, res) => {
-    const { messName, ownerName, mealRate, lunchTiming, dinnerTiming, contact, mealPrice } = req.body;
+    const { messName, ownerName, mealRate, lunchTiming, dinnerTiming, contact,address } = req.body;
     try {
-        const mess = await messModel.create({ messName, ownerName, mealRate, lunchTiming, dinnerTiming, contact, mealPrice,totalMembers:0}); 
+        const mess = await messModel.create({ messName, ownerName, mealRate, lunchTiming, dinnerTiming, contact,totalMembers:0,address}); 
         res.status(201).json({ message: 'Mess added successfully', mess, success: true }); 
     } catch (error) {
         res.status(500).json({ message: 'Error adding mess', error, success: false }); 

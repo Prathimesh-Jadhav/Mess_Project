@@ -127,10 +127,9 @@ const fetchUserMealDetails = async (req,res) => {
 
             const messDetails = await messModel.findOne();
             if(!messDetails){
-                return res.status(500).json({ message: 'Error fetching mess details', error, success: false });
+                return res.status(500).json({ message: 'Error fetching mess details', success: false });
             }
 
-            const mealRate = messDetails.mealRate;
 
             const totalAmount =  totalPaidAmount;
 
@@ -141,7 +140,6 @@ const fetchUserMealDetails = async (req,res) => {
                 totalMealsHad,
                 totalAmount,
                 paidAmount: totalPaid,
-                currentMonth: totalMealsHad * mealRate,
                 due: totalAmount - totalPaid // Added paidAmount calculation
             });
         }

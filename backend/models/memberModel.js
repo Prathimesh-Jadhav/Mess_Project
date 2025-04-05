@@ -15,11 +15,11 @@ const memberSchema = new mongoose.Schema({
         required: true,
     },
     joinDate: {
-        type: Date,
+        type: String,
         required: true,
     },
     subscibedAt: {
-        type: Date,
+        type: String,
         required: true,
     },
     college: {
