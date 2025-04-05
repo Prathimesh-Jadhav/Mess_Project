@@ -19,15 +19,7 @@ app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true })); // CORS
 app.use(express.json()); // JSON parsing
 app.use(express.urlencoded({ extended: true })); // URL encoding
 app.use(mongoSanitize()); // Prevent NoSQL injection
-app.use(xssClean()); // Prevent XSS attacks
 
-
-// Rate Limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP
-  });
-app.use(limiter);
 
 const PORT = process.env.PORT || 5000;
 
