@@ -4,6 +4,7 @@ import { navOptions } from "../data";
 import { MessContext } from "../GlobalContext/Context";
 import { MdCancel } from "react-icons/md";
 import { AiOutlineLogout } from "react-icons/ai";
+import { CgProfile } from "react-icons/cg";
 
 /**
  * The Menubar component is a sidebar that slides in from the right when the
@@ -12,7 +13,7 @@ import { AiOutlineLogout } from "react-icons/ai";
  * `Link` components from `react-router-dom`, which will perform client-side
  * routing to the corresponding page. The menubar also includes a logout link
  * that will log the user out and redirect them to the login page.
- * @param {function} setOpenMenubar - sets the state of the menubar to open or
+ * @param {function} setOpenMen ubar - sets the state of the menubar to open or
  * closed
  * @param {boolean} openMenubar - whether the menubar is open or closed
  * @returns {JSX.Element} - the JSX element representing the menubar
@@ -22,8 +23,7 @@ const Menubar = ({ setOpenMenubar, openMenubar }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    console.log("Logging out");
-    localStorage.clear();
+    sessionStorage.clear();
     setIsLogin(false);
     setOpenMenubar(false);
     navigate("/");
@@ -35,16 +35,16 @@ const Menubar = ({ setOpenMenubar, openMenubar }) => {
         openMenubar ? "translate-x-0" : "translate-x-full"
       } z-10 border-[1px] border-gray-300`}
     >
-      <div className="w-full flex justify-between items-center mt-10">
+      <div className="w-full flex justify-between items-center mt-10 ">
         <p className="text-[24px] font-semibold">
-          Dine<span className="text-primary">Flow</span>
+          Buddy's <span className="text-primary">Kitchen</span>
         </p>
         <div onClick={() => setOpenMenubar(false)}>
           <MdCancel size={22} />
         </div>
       </div>
       <div className="flex flex-col mt-6 px-2 text-gray-600">
-        {navOptions[role].map((item) => (
+        {navOptions[role]?.map((item) => (
           <Link
             key={item.name}
             onClick={() => {
@@ -59,6 +59,21 @@ const Menubar = ({ setOpenMenubar, openMenubar }) => {
             <p className="text-[18px] text-gray-600">{item.name}</p>
           </Link>
         ))}
+
+        <Link
+            key={'Profile'}
+            onClick={() => {
+              setTimeout(() => {
+                setOpenMenubar(false);
+              }, 200);
+            }}
+            className="text-text hover:bg-primary flex gap-2 items-center rounded-md py-2 px-2"
+            to={`/layout/profilepage/${sessionStorage.getItem('mobileNumber')}`}
+          >
+            <div>{<CgProfile size={20} />}</div>
+            <p className="text-[18px] text-gray-600">My Profile</p>
+          </Link>
+
         {/* Fix: Call handleLogout correctly */}
         <div
           className="text-text hover:bg-primary flex gap-2 items-center  rounded-md py-2 px-2 cursor-pointer"

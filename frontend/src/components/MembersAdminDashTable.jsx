@@ -1,7 +1,11 @@
 import { Table } from "antd";
-import React from 'react'
+import React from 'react';
 
-const MembersAdminDashTable = () => {
+const MembersAdminDashTable = ({ dashboardMemberDetails }) => {
+
+  // Sort in descending order of remaining amount (due)
+  const sortedData = dashboardMemberDetails.sort((a, b) => b.due - a.due);
+
   const columns = [
     {
       title: 'Name',
@@ -14,54 +18,42 @@ const MembersAdminDashTable = () => {
       key: 'mobileNumber',
     },
     {
-      title: 'Place',
-      dataIndex: 'place',
-      key: 'place',
+      title: 'Total Meals',
+      dataIndex: 'totalMealsHad',
+      key: 'totalMealsHad',
     },
     {
-      title: 'Accommodation',
-      dataIndex: 'accommodation',
-      key: 'accommodation',
+      title: 'Total Amount',
+      dataIndex: 'totalAmount',
+      key: 'totalAmount',
     },
     {
-      title: 'College',
-      dataIndex: 'college',
-      key: 'college',
-    },
-  ];
-
-  const data = [
-    {
-      key: '1',
-      name: 'Rahul Sharma',
-      mobileNumber: '9876543210',
-      place: 'Pune',
-      accommodation: 'Hostel',
-      college: 'MIT Pune',
+      title: 'Amount Paid',
+      dataIndex: 'paidAmount',
+      key: 'paidAmount',
     },
     {
-      key: '2',
-      name: 'Sneha Patil',
-      mobileNumber: '9123456789',
-      place: 'Mumbai',
-      accommodation: 'PG',
-      college: 'IIT Bombay',
-    },
-    {
-      key: '3',
-      name: 'Amit Verma',
-      mobileNumber: '9988776655',
-      place: 'Bangalore',
-      accommodation: 'Rented Apartment',
-      college: 'RV College of Engineering',
+      title: 'Remaining Amount',
+      dataIndex: 'due',
+      key: 'due',
     },
   ];
 
   return (
     <div className='w-full overflow-auto'>
-      <Table columns={columns} dataSource={data} />
+      <Table
+        columns={columns}
+        dataSource={sortedData}
+        pagination={{
+          pageSize: 5,
+          position: ['bottomCenter'],
+          showSizeChanger: false,
+        }}
+        rowKey={(record) => record.mobileNumber}
+      />
     </div>
   );
 };
 
 export default MembersAdminDashTable;
+

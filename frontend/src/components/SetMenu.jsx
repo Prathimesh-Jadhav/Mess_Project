@@ -1,4 +1,6 @@
 import React, { useContext, useState } from 'react'
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const SetMenu = () => {
   const [menu, setMenu] = useState({
@@ -12,12 +14,25 @@ const SetMenu = () => {
     setMenu({ ...menu, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    console.log('Menu Data:', menu);
+  const handleSubmit = async () => {
+    //set Todays Menu:
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/menu/addTodaysMenu`, menu, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      if(response.data.success){
+        toast.success(response.data.success);
+      }
+    }
+    catch (err) {
+      console.log(err);
+      toast.error('error in setting Menu')
+    }
     setMenu({
       riceRoti: '',
       curry: '',
-      extra: '',
       specialItems: ''
     })
     alert('Menu saved successfully!');
@@ -50,19 +65,6 @@ const SetMenu = () => {
             onChange={handleChange}
             className='w-full px-3 py-2 rounded-md border-[1px] focus:outline-primary'
             placeholder="Enter today's curry"
-          />
-        </div>
-
-        {/* Extra */}
-        <div>
-          <label className='text-bodyText ml-1'>Extra</label>
-          <input
-            type='text'
-            name='extra'
-            value={menu.extra}
-            onChange={handleChange}
-            className='w-full px-3 py-2 rounded-md border-[1px] focus:outline-primary'
-            placeholder='Enter any extra items'
           />
         </div>
 

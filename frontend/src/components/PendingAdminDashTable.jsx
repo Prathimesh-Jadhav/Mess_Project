@@ -1,7 +1,13 @@
 import { Table } from "antd";
-import React from 'react'
+import React from 'react';
 
-const PendingAdminDashTable = () => {
+const PendingAdminDashTable = ({ memberDueDetails }) => {
+  // Filter members who have pending dues
+  const membersDue = memberDueDetails.filter((member) => member.due !== 0);
+
+  // Sort in descending order by date
+  const sortedData = membersDue.sort((a, b) => new Date(b.date) - new Date(a.date));
+
   const columns = [
     {
       title: 'Name',
@@ -14,14 +20,14 @@ const PendingAdminDashTable = () => {
       key: 'mobileNumber',
     },
     {
-      title: 'Place',
-      dataIndex: 'place',
-      key: 'place',
+      title: 'Permanent Address',
+      dataIndex: 'permanentAddress',
+      key: 'permanentAddress',
     },
     {
-      title: 'Accommodation',
-      dataIndex: 'accommodation',
-      key: 'accommodation',
+      title: 'Hostel Address',
+      dataIndex: 'hostelAddress',
+      key: 'hostelAddress',
     },
     {
       title: 'College',
@@ -30,44 +36,18 @@ const PendingAdminDashTable = () => {
     },
     {
       title: 'Pending Amount',
-      dataIndex: 'pendingAmount',
-      key: 'pendingAmount',
-    },
-  ];
-
-  const data = [
-    {
-      key: '1',
-      name: 'Rahul Sharma',
-      mobileNumber: '9876543210',
-      place: 'Pune',
-      accommodation: 'Hostel',
-      college: 'MIT Pune',
-      pendingAmount: 2000,
-    },
-    {
-      key: '2',
-      name: 'Sneha Patil',
-      mobileNumber: '9123456789',
-      place: 'Mumbai',
-      accommodation: 'PG',
-      college: 'IIT Bombay',
-      pendingAmount: 1500,
-    },
-    {
-      key: '3',
-      name: 'Amit Verma',
-      mobileNumber: '9988776655',
-      place: 'Bangalore',
-      accommodation: 'Rented Apartment',
-      college: 'RV College of Engineering',
-      pendingAmount: 1000,
+      dataIndex: 'due',
+      key: 'due',
     },
   ];
 
   return (
     <div className='w-full overflow-auto'>
-      <Table columns={columns} dataSource={data} />
+      <Table 
+        columns={columns} 
+        dataSource={sortedData} 
+        pagination={{ pageSize: 7 }} 
+      />
     </div>
   );
 };

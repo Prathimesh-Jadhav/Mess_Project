@@ -1,12 +1,11 @@
 import { Table } from "antd";
-import React from 'react'
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-const MembersTable = () => {
-
-  const [status, setStatus] = React.useState('not active')
+const MembersTable = ({ members }) => {
   const navigate = useNavigate();
-
+  const [pageSize, setPageSize] = useState(7); // Track page size in component state
+  
   const columns = [
     {
       title: 'Name',
@@ -15,64 +14,57 @@ const MembersTable = () => {
     },
     {
       title: 'Mobile Number',
-      dataIndex: 'mobile',
-      key: 'mobile',
+      dataIndex: 'mobileNumber',
+      key: 'mobileNumber',
     },
     {
-      title: 'Place',
-      dataIndex: 'place',
-      key: 'place',
+      title: 'Total Meals',
+      dataIndex: 'totalMealsHad',
+      key: 'totalMealsHad',
     },
     {
-      title: 'Accomodation',
-      dataIndex: 'accommodation',
-      key: 'accommodation',
+      title: 'Current Month',
+      dataIndex: 'currentMonth',
+      key: 'currentMonth',
     },
     {
-      title: 'College',
-      dataIndex: 'college',
-      key: 'college',
+      title: 'Total Due',
+      dataIndex: 'due',
+      key: 'due',
     },
   ];
 
-  const data = [
-    {
-      key: '1',
-      name: 'Rahul Sharma',
-      mobile: '9876543210',
-      place: 'Pune',
-      accommodation: 'Hostel',
-      college: 'MIT Pune',
+  // Configure the pagination options with change handler
+  const paginationConfig = {
+    pageSize: pageSize,
+    showSizeChanger: true,
+    pageSizeOptions: ['5', '7', '10', '20'],
+    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+    position: ['bottomCenter'],
+    onShowSizeChange: (current, size) => {
+      setPageSize(size);
     },
-    {
-      key: '2',
-      name: 'Sneha Patil',
-      mobile: '9123456789',
-      place: 'Mumbai',
-      accommodation: 'PG',
-      college: 'IIT Bombay',
-    },
-    {
-      key: '3',
-      name: 'Amit Verma',
-      mobile: '9988776655',
-      place: 'Bangalore',
-      accommodation: 'Rented Apartment',
-      college: 'RV College of Engineering',
-    },
-  ];
+    onChange: (page, pageSize) => {
+      setPageSize(pageSize);
+    }
+  };
 
   return (
     <div className='w-full overflow-auto'>
-      <Table columns={columns} dataSource={data}
+      <Table 
+        columns={columns} 
+        dataSource={members}
+        pagination={paginationConfig}
         onRow={(record) => ({
           onClick: () => {
-            navigate(`/layout/admin/memberDetails/${record.key}`); // Redirecting to details page with ID
+            navigate(`/layout/admin/memberDetails/${record.mobileNumber}`); // Redirecting to details page with ID
           },
+          style: { cursor: 'pointer' }
         })}
+        rowClassName="hover:bg-gray-50"
       />
     </div>
-  )
-}
+  );
+};
 
-export default MembersTable
+export default MembersTable;

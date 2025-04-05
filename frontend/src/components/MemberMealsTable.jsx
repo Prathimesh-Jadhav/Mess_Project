@@ -1,7 +1,23 @@
 import { Table } from "antd";
-import React from 'react'
+import React, { useContext } from 'react';
+import { MessContext } from "../GlobalContext/Context";
 
-const MemberMealsTable = () => {
+const MemberMealsTable = ({ userMealDetails }) => {
+  const { mealRate } = useContext(MessContext);
+
+  // Sort on the date field
+  const sortedData = userMealDetails.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const data = sortedData.map((meal) => {
+    return {
+      key: meal._id,
+      date: meal.date,
+      totalMealsHad: meal.totalMealsHad,
+      mealsSkipped: meal.mealsSkipped,
+      amount: meal.totalMealsHad * mealRate,
+    };
+  });
+
   const columns = [
     {
       title: 'Date',
@@ -10,8 +26,13 @@ const MemberMealsTable = () => {
     },
     {
       title: 'Meals',
-      dataIndex: 'meals',
-      key: 'meals',
+      dataIndex: 'totalMealsHad',
+      key: 'totalMealsHad',
+    },
+    {
+      title: 'Meals Skipped',
+      dataIndex: 'mealsSkipped',
+      key: 'mealsSkipped',
     },
     {
       title: 'Amount',
@@ -20,30 +41,13 @@ const MemberMealsTable = () => {
     },
   ];
 
-  const data = [
-    {
-      key: '1',
-      date: '2025-03-18',
-      meals: 2,
-      amount: 200,
-    },
-    {
-      key: '2',
-      date: '2025-03-17',
-      meals: 3,
-      amount: 300,
-    },
-    {
-      key: '3',
-      date: '2025-03-16',
-      meals: 1,
-      amount: 100,
-    },
-  ];
-
   return (
     <div className='w-full overflow-auto'>
-      <Table columns={columns} dataSource={data} />
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={data.length > 7 ? { pageSize: 7 } : false} 
+      />
     </div>
   );
 };

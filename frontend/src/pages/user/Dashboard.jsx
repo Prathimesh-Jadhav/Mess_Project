@@ -7,13 +7,26 @@ import { MessContext } from '../../GlobalContext/Context';
 import MemberMealsTable from '../../components/MemberMealsTable';
 import { FaUtensils, FaSun, FaMoon } from 'react-icons/fa'; // Icons for meal timings
 import MemberMealsDashTable from '../../components/MemberMealsDashTable';
+import axios from 'axios';
+import { FaTowerBroadcast } from 'react-icons/fa6';
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { role } = useContext(MessContext);
   const [openQR, setOpenQR] = useState(false);
   const [qrResult, setQrResult] = useState('');
+  const { role, adminDetails, mealRate,setIsLogin } = useContext(MessContext);
+  const [mealDetails, setMealDetails] = useState([]);
+  const [stats, setStats] = useState([]);
+  const [memberDetails, setMemberDetails] = useState({});
+  const [messDetails, setMessDetails] = useState({});
+  const [menuDetails, setMenuDetails] = useState({});
+  const [memberMeals, setMemberMeals] = useState([]);
+
+  const Navigate = useNavigate();
 
   useEffect(() => {
+
     if (openQR) {
       const scanner = new Html5QrcodeScanner("qr-reader", {
         fps: 10,
@@ -22,6 +35,10 @@ const Dashboard = () => {
 
       scanner.render(
         (decodedText) => {
+          if(sessionStorage.getItem('mobileNumber') == null && sessionStorage.getItem('role') !='user'){
+            toast.error('Please login first')
+            return;
+          }
           setQrResult(decodedText);
           setOpenQR(false);
           alert(`Scanned QR Code: ${decodedText}`);
@@ -34,6 +51,160 @@ const Dashboard = () => {
       return () => scanner.clear();
     }
   }, [openQR]);
+
+  useEffect(() => {
+    if (role != 'user') {
+      toast.error('Not authorized');
+      sessionStorage.clear();
+      setIsLogin(false);
+      Navigate('/');
+    }
+  }, [])
+
+  useEffect(() => {
+    addAmeal();
+  }, [qrResult])
+
+  useEffect(() => {
+    getUserMeals();
+    getMemberDetails();
+    getMessDetails();
+    getMenuDetails();
+    getMemberMeals();
+  }, [])
+
+  useEffect(() => {
+    if (
+      mealDetails?.totalMealsHad !== undefined &&
+      memberDetails[0]?.status &&
+      mealRate !== undefined
+    ) {
+      updateKeyStats();
+    }
+  }, [mealDetails, memberDetails, mealRate]);
+
+  const updateKeyStats = () => {
+    if (!mealDetails || !memberDetails || !messDetails) {
+      console.log("Data not yet loaded");
+      return;
+    }
+
+    const data = keyStats[role]?.map((item) => {
+      if (item.heading === 'Total Meals') {
+        return { ...item, value: mealDetails?.totalMealsHad || 0 };
+      } else if (item.heading === 'Total Cost') {
+        const totalMealsHadCost = (mealDetails?.totalMealsHad || 0) * (mealRate || 0);
+        return { ...item, value: totalMealsHadCost, tag: `@${mealRate} per meal` };
+      } else if (item.heading === 'Subscription Status') {
+        return { ...item, value: memberDetails[0]?.status || "Unknown" };
+      } else {
+        return item;
+      }
+    });
+    setStats(data);
+  };
+
+  const getMemberDetails = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/members/getMemberDetails`, { mobileNumber: sessionStorage.getItem('mobileNumber') });
+      if (response.data.success) {
+        setMemberDetails(response.data.data);
+      }
+      else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding meal:", error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const getUserMeals = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/meal/getMealDetails`, { mobileNumber: sessionStorage.getItem('mobileNumber') });
+      if (response.data.success) {
+        setMealDetails(response.data.data);
+      }
+      else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding meal:", error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const getMessDetails = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/messDetails/getMessDetails`);
+      if (response.data.success) {
+        setMessDetails(response.data.data);
+      }
+      else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding meal:", error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const getMemberMeals = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/meal/getAllMealsOfMember`, { mobileNumber: sessionStorage.getItem('mobileNumber') });
+      if (response.data.success) {
+        setMemberMeals(response.data.data);
+      }
+      else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding meal:", error);
+      toast.error(error.response.data.message);
+    }
+  };
+
+
+  const getMenuDetails = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/menu/getTodaysMenu`);
+      if (response.data.success) {
+        setMenuDetails(response.data.data[0]);
+      }
+      else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding meal:", error);
+    }
+  }
+
+
+  const addAmeal = async () => {
+    if (!qrResult) {
+      return;
+    }
+    if (qrResult != `mobileNumber:${adminDetails.mobileNumber},password:${adminDetails.password}`) {
+      toast.error('invalid QR');
+      return;
+    }
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/meal/addMeal`, { mobileNumber: sessionStorage.getItem('mobileNumber') });
+      if (response.data.success) {
+        toast.success('Meal added successfully');
+        getUserMeals();
+        getMemberMeals();
+        getMemberDetails();
+      }
+      else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding meal:", error);
+      toast.error(error.response.data.message);
+    }
+    setQrResult('');
+  };
 
   return (
     <div className='w-full min-h-[85vh] font-poppins px-[30px] relative mt-[80px]'>
@@ -66,18 +237,16 @@ const Dashboard = () => {
       {qrResult && (
         <div className='mt-4 p-3 bg-green-100 text-green-800 rounded-lg shadow-md'>
           <p className="font-medium">Scanned QR Code:</p>
-          <p className="text-lg">{qrResult}</p>
+          <p className="text-lg">QR scanned successfully</p>
         </div>
       )}
 
       {/* Key Stats */}
       <div className='mt-10 flex flex-wrap gap-4 items-center'>
-        {keyStats[role].map((item, index) => (
+        {stats?.map((item, index) => (
           <KeyStatsDiv key={index} heading={item.heading} value={item.value} Logo={item.logo} tag={item.tag} />
         ))}
       </div>
-
-
 
       {/* Today's Meal in Mess */}
       <div className='mt-8 p-6 bg-gradient-to-r from-orange-400 to-orange-600 text-white rounded-lg'>
@@ -86,7 +255,7 @@ const Dashboard = () => {
             <p className="text-2xl font-semibold">Today's Special</p>
           </div>
           <p className="text-lg font-medium">
-            Today's special in the mess is <strong>Paneer Butter Masala with Roti</strong>.
+            Today's special in the mess is <strong>{menuDetails?.riceRoti} with flavorful {menuDetails?.curry}, served with special {menuDetails?.specialItems}!</strong>.
           </p>
           <div className="mt-4 flex items-center gap-3">
             <FaUtensils className="text-3xl" />
@@ -95,8 +264,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-            {/* Mess Timings Card */}
-            <div className="mt-8 p-6 bg-gray-200 rounded-2xl border-[1px] border-gray-300">
+      {/* Mess Timings Card */}
+      <div className="mt-8 p-6 bg-gray-200 rounded-2xl border-[1px] border-gray-300">
         <div className="flex flex-col items-center text-center">
           <p className="text-2xl font-semibold mb-4 ">Mess Timings</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
@@ -105,7 +274,7 @@ const Dashboard = () => {
               <FaSun className="text-3xl text-yellow-500" />
               <div className="text-left">
                 <p className="text-lg font-medium">Lunch</p>
-                <p className="text-sm text-gray-600">12:00 PM - 2:00 PM</p>
+                <p className="text-sm text-gray-600">{messDetails[0]?.lunchTiming}</p>
               </div>
             </div>
             {/* Dinner Timing */}
@@ -113,7 +282,7 @@ const Dashboard = () => {
               <FaMoon className="text-3xl text-blue-500" />
               <div className="text-left">
                 <p className="text-lg font-medium">Dinner</p>
-                <p className="text-sm text-gray-600">7:00 PM - 9:00 PM</p>
+                <p className="text-sm text-gray-600">{messDetails[0]?.dinnerTiming}</p>
               </div>
             </div>
           </div>
@@ -126,9 +295,9 @@ const Dashboard = () => {
       <div>
         <div className='border-[1px] border-gray-300 rounded-md mt-10 p-4'>
           <p className='text-[24px] font-semibold'>Your Meals in this Month</p>
-          <div className='mt-4 overflow-x-auto '> 
+          <div className='mt-4 overflow-x-auto '>
 
-          <MemberMealsDashTable />
+            <MemberMealsDashTable memberMeals={memberMeals} />
           </div>
         </div>
       </div>

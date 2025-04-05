@@ -13,7 +13,11 @@ import MemberDetails from './pages/admin/MemberDetails'
 import { useEffect, useState } from 'react'
 import logovideo from './assets/logovideo.mp4'
 import { MdKeyboardVoice } from 'react-icons/md'
-import ProfilePage from './pages/user/ProfilePage'
+import ProfilePage from './pages/ProfilePage'
+import { ToastContainer } from 'react-toastify'
+import Meals from './pages/admin/Meals'
+import Payments from './pages/user/Payments'
+import ResetPassword from './pages/ResetPassword'
 
 function App() {
 
@@ -36,18 +40,22 @@ function App() {
           </div>
         </div>
       )}
+      <ToastContainer />
       <Context>
         <Router>
           <Routes>
             <Route path='/' element={<Login />} />
+            <Route path='/reset-password/:token' element={<ResetPassword />} />
             <Route path='/layout' element={<Layout />}>
               <Route path='user/dashboard' element={<UserDashboard />} />
               <Route path='admin/dashboard' element={<Dashboard />} />
               <Route path='admin/members' element={<Members />} />
+              <Route path='admin/meals' element={<Meals />} />
               <Route path='admin/messDetails' element={<MessDetails />} />
               <Route path='user/mealDetails' element={<MealDetails />} />
+              <Route path='user/payments' element={<Payments />} />
               <Route path='admin/memberDetails/:id' element={<MemberDetails />} />
-              <Route path='user/profilepage' element={<ProfilePage />} />
+              <Route path='profilepage/:id' element={<ProfilePage />} />
             </Route>
           </Routes>
         </Router>

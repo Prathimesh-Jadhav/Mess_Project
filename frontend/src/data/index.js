@@ -6,6 +6,7 @@ import { FaBowlFood } from "react-icons/fa6";
 import { MdOutlineCurrencyRupee } from "react-icons/md";
 import { IoIosPerson } from "react-icons/io";
 import { MdCurrencyRupee } from "react-icons/md";
+import { GiHotMeal } from "react-icons/gi";
 
 export const navOptions = {
     admin:[
@@ -20,6 +21,11 @@ export const navOptions = {
           logo:IoPeople
        },
        {
+          name:'Meals',
+          path:'/layout/admin/meals',
+          logo:GiHotMeal
+       },
+       {
           name:'Mess Details',
           path:'/layout/admin/messDetails',
           logo:MdOutlineFoodBank
@@ -32,8 +38,13 @@ export const navOptions = {
           logo:GoHome
        },
        {
-          name:'Your Meals',
+          name:'My Meals',
           path:'/layout/user/mealDetails',
+          logo:MdOutlineFoodBank
+       },
+       {
+          name:'My Payments',
+          path:'/layout/user/payments',
           logo:MdOutlineFoodBank
        }
     ]
@@ -58,7 +69,8 @@ export const keyStats = {
          value:'0',
          logo:MdCurrencyRupee,
          tag:'revenue Today' 
-      }
+      },
+      
    ],
    user:[
       {
