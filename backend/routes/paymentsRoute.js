@@ -3,7 +3,7 @@ const router = express.Router();
 const { getPaymentDetails,handleAmountPaid,getPaymentHistory,getDuePayments } = require("../controllers/paymentsController");
 const Payment = require("../models/paymentsModel");
 
-router.post('/paymentDetails',getPaymentDetail);
+router.post('/paymentDetails',getPaymentDetails);
 router.put('/amountPaid',handleAmountPaid)
 router.post('/getPaymentHistory',getPaymentHistory)
 router.post('/getDuePayments',getDuePayments)
