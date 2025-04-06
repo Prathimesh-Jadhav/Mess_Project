@@ -4,9 +4,9 @@ const Meals = require("../models/mealsModel");
 
 const startScheduler = () => {
     // Schedule the job to run at 12:00 AM every night
-    cron.schedule("* 2 * * *", async () => {
+    cron.schedule("0 2 * * *", async () => {
         try {
-            console.log("Running payment processing every 1 minute...");
+            console.log("Running payment processing at 2:00 AM...");
             await processMonthlyPaymentsJob();  
         } catch (error) {
             console.error("Error processing payments from CRON:", error);
@@ -14,12 +14,12 @@ const startScheduler = () => {
     });
     
 
-    cron.schedule("* 1 * * *", async () => {
+    cron.schedule("0 1 * * *", async () => {
         try {
-            console.log("Running meal monitoring job...");
+            console.log("Running meal monitoring job at 1:00 AM...");
     
             const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate());
+            yesterday.setDate(yesterday.getDate() - 1); // Subtract 1 to get yesterday
             yesterday.setHours(0, 0, 0, 0); // Normalize to start of the day
             const yesterdayString = yesterday.toISOString().split("T")[0]; // Format to YYYY-MM-DD
     
@@ -37,6 +37,7 @@ const startScheduler = () => {
             console.error("Error running meal monitoring job:", error);
         }
     });
+    
     
 
 };
