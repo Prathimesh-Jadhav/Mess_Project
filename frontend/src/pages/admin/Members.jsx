@@ -124,7 +124,7 @@ const Members = () => {
                 </div>
 
                 <div className='mt-4'>
-                    <MembersTable members={searchedData} />
+                    <MembersTable members={searchedData} fetchMemberDashDetails={fetchMemberDashDetails}/>
                 </div>
             </div>
 

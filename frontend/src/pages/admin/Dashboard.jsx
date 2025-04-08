@@ -44,6 +44,8 @@ const Dashboard = () => {
       sessionStorage.clear();
       window.location.href = '/';
     }
+
+    updateTodayDetails();
   },[])
 
 
@@ -56,6 +58,21 @@ const Dashboard = () => {
       setQrData(`mobileNumber:${adminDetails.mobileNumber},password:${adminDetails.password}`);
     }
   }, [adminDetails])
+
+
+  const updateTodayDetails = async () => {
+    try{
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/users/dailyProcessor`);
+      console.log(response);
+      if(response.data.success){
+        toast.success(response.data.message);
+      }
+    }
+    catch(err){
+      console.log(err);
+      toast.error('error in updating payments and meals');
+    }
+  }
 
 
   /**
