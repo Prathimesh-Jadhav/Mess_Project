@@ -1,7 +1,9 @@
 const userModel = require("../models/userModel"); // Adjust the path as per your folder structure
 const memberModel = require("../models/memberModel");
+const paymentsModel = require("../models/paymentsModel");
+const mealsModel = require("../models/mealsModel");
 const bcrypt = require("bcryptjs");
-const { get } = require("mongoose");
+
 
 const registerMember = async (req, res) => {
     try {
@@ -108,5 +110,41 @@ const updateMembers = async (req, res) => {
     }
 };
 
+const deleteMember = async (req, res) => {
+    const { mobileNumber } = req.params;
 
-module.exports = { registerMember,getMemberDetails,getAllMembers,updateMembers };
+    try {
+        // Delete member
+        const member = await memberModel.findOneAndDelete({ mobileNumber });
+        if (!member) {
+            return res.status(404).json({ message: 'Member not found', success: false });
+        }
+
+        // Delete user
+        const user = await userModel.findOneAndDelete({ mobileNumber });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found', success: false });
+        }
+
+        // Delete meals
+        const mealDeleteResult = await mealsModel.deleteMany({ mobileNumber });
+        const mealsDeleted = mealDeleteResult.deletedCount;
+
+        // Delete payments
+        const paymentDeleteResult = await paymentsModel.deleteMany({ mobileNumber });
+        const paymentsDeleted = paymentDeleteResult.deletedCount;
+
+        return res.status(200).json({
+            success: true,
+            message: 'Deletion successful',
+        });
+    } catch (error) {
+        console.error('Error deleting member:', error);
+        return res.status(500).json({ message: 'Error deleting member', error, success: false });
+    }
+};
+
+
+
+
+module.exports = { registerMember,getMemberDetails,getAllMembers,updateMembers,deleteMember };

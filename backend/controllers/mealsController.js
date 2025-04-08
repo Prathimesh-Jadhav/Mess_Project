@@ -233,7 +233,32 @@ const getMealDetails = async (req, res) => {
     }
 }
 
+const handleMissedMeals =  async (req,res) => {
+    try {
+        console.log("Running meal monitoring job at 1:00 AM...");
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate()); // Subtract 1 to get yesterday
+        yesterday.setHours(0, 0, 0, 0); // Normalize to start of the day
+        const yesterdayString = yesterday.toISOString().split("T")[0]; // Format to YYYY-MM-DD
+
+        const meals = await mealsModel.find({ date: yesterdayString });
+
+        for (let meal of meals) {
+            if ((meal.totalMealsHad + meal.mealsSkipped <2) && meal.totalMealsHad < 2) {
+                meal.mealsSkipped = 2 - meal.totalMealsHad;
+                await meal.save();
+            }
+        }
+
+      return {message:'meals Update successfully for Today',success:true}   
+    } catch (error) {
+        return {messsage:'error in updating meals',error,success:false}
+    }
+
+}
 
 
 
-module.exports = { addMeal,getAllMeals,fetchUserMealDetails,getTotalDueForMembers,getMealDetails,getAllMealsOfMember };
+
+module.exports = { addMeal,getAllMeals,fetchUserMealDetails,getTotalDueForMembers,getMealDetails,getAllMealsOfMember,handleMissedMeals };

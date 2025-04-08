@@ -8,6 +8,7 @@ async function processMonthlyPaymentsJob() {
     try {
         //get price 
         const mess = await messModel.find({});
+
         if (!mess) {
             return { message: "Mess not found",success:false };
         }
@@ -77,7 +78,6 @@ async function processMonthlyPaymentsJob() {
 
             // Calculate amounts
             const totalAmount = mealsHadForPayment * Number(pricePerMeal);
-
             const deductedAmount = skippedForPayments * Number(deductionPerSkippedMeal)*2;
             const finalAmount = totalAmount - deductedAmount;
 
@@ -120,7 +120,7 @@ async function processMonthlyPaymentsJob() {
 
     } catch (error) {
         console.error("Error processing payments:", error);
-        return { error: "Failed to process payments" };
+        return { message: "Failed to process payments",success:false };
     }
 }
 

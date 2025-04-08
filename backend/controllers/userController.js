@@ -2,6 +2,7 @@ const userModel = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const { runDailyAdminTask } = require("./systemController");
 
 
 const login = async (req, res) => {
@@ -15,7 +16,9 @@ const login = async (req, res) => {
         if (!passwordRight) {
             return res.status(401).json({ message: "Invalid password" });
         }
+        console.log(process.env.JWT_SECRET)
         const token =  jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        console.log(token)
         return res.status(200).json({ message: "Login successful", data:user,token:token,success:true }); 
     } catch (error) {
         return res.status(500).json({ message: "Internal server error", error });
@@ -126,5 +129,18 @@ const resetPassword = async (req, res) => {
     }
 }
 
+const dailyProcessor = async (req, res) => {
+    try{
+        const response = await runDailyAdminTask();
+        console.log(response)
+        if(!response.success){
+            return res.status(500).json({message:response.message,success:false});
+        }
+        return res.status(200).json({message:response.message,success:true});
+    }catch(error){
+        return res.status(500).json({ message: "Internal server error", error,success:false });
+    }
+}
 
-module.exports = { login,addAdmin,getAdmin,getUser,updateUser,forgotPassword,resetPassword };
+
+module.exports = { login,addAdmin,getAdmin,getUser,updateUser,forgotPassword,resetPassword,dailyProcessor };

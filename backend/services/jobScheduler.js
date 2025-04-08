@@ -14,7 +14,7 @@ const startScheduler = () => {
     });
     
 
-    cron.schedule("0 1 * * *", async () => {
+const handleMissedMeals =  async (req,res) => {
         try {
             console.log("Running meal monitoring job at 1:00 AM...");
     
@@ -36,10 +36,8 @@ const startScheduler = () => {
         } catch (error) {
             console.error("Error running meal monitoring job:", error);
         }
-    });
+    }
     
-    
-
 };
 
 module.exports = { startScheduler };
