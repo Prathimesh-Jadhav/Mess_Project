@@ -56,7 +56,7 @@ const Login = () => {
 
    const handleSubmit = async () => {
       setLoading(true);
-      if(mobileNumber.length!=10){
+      if(loginData.mobileNumber.length!=10){
          toast.error('Please enter a valid mobile number');
          return
       }
