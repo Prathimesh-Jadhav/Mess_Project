@@ -55,11 +55,11 @@ const Login = () => {
    }
 
    const handleSubmit = async () => {
+      setLoading(true);
       if(mobileNumber.length!=10){
          toast.error('Please enter a valid mobile number');
          return
       }
-      setLoading(true);
       try {
          const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/login`, loginData, {
             headers: {
