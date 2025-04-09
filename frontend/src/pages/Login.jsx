@@ -58,6 +58,7 @@ const Login = () => {
       setLoading(true);
       if(loginData.mobileNumber.length!=10){
          toast.error('Please enter a valid mobile number');
+         setLoading(false)
          return
       }
       try {
