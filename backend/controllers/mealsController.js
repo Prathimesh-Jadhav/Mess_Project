@@ -241,6 +241,7 @@ const handleMissedMeals =  async (req,res) => {
         yesterday.setDate(yesterday.getDate()); // Subtract 1 to get yesterday
         yesterday.setHours(0, 0, 0, 0); // Normalize to start of the day
         const yesterdayString = yesterday.toISOString().split("T")[0]; // Format to YYYY-MM-DD
+        console.log(yesterdayString);
 
         const meals = await mealsModel.find({ date: yesterdayString });
 

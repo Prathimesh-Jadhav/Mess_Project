@@ -2,12 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
-const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
-const xssClean = require("xss-clean");
 const mongoose = require("mongoose");
-const cron = require("node-cron");
-const processMonthlyPayments = require("./services/paymentsProcessor");
 
 
 const app = express();
@@ -15,7 +11,7 @@ const app = express();
 // Middleware
 app.options('*', cors());
 app.use(helmet()); // Security headers
-app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true })); // CORS
+app.use(cors({ origin:process.env.CORS_ORIGIN, credentials: true })); // CORS
 app.use(express.json()); // JSON parsing
 app.use(express.urlencoded({ extended: true })); // URL encoding
 app.use(mongoSanitize()); // Prevent NoSQL injection
