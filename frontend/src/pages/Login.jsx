@@ -105,7 +105,7 @@ const Login = () => {
 
       } catch (err) {
          console.error(err);
-         toast.error('Error in login');
+         toast.error(err.response?.data?.message || 'Error occurred');
       } finally {
          setLoading(false);
       }
