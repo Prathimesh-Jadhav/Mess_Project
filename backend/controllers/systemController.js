@@ -26,6 +26,7 @@ async function runDailyAdminTask() {
     }
 
     if (!config) {
+      await SystemConfig.deleteMany({});
       await SystemConfig.create({date: today});
     } else {
       config.value = today;
