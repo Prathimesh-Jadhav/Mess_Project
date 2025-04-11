@@ -238,7 +238,7 @@ const handleMissedMeals =  async (req,res) => {
         console.log("Running meal monitoring job at 1:00 AM...");
 
         const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate()); // Subtract 1 to get yesterday
+        yesterday.setDate(yesterday.getDate()-1); // Subtract 1 to get yesterday
         yesterday.setHours(0, 0, 0, 0); // Normalize to start of the day
         const yesterdayString = yesterday.toISOString().split("T")[0]; // Format to YYYY-MM-DD
         console.log(yesterdayString);
