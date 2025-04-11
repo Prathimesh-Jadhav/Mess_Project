@@ -245,7 +245,7 @@ const handleMissedMeals =  async (req,res) => {
         const meals = await mealsModel.find({ date: yesterdayString });
 
         for (let meal of meals) {
-            if ((meal.totalMealsHad + meal.mealsSkipped <2) && meal.totalMealsHad < 2) {
+            if ((meal.totalMealsHad + meal.mealsSkipped) <2 && meal.totalMealsHad < 2) {
                 meal.mealsSkipped = 2 - meal.totalMealsHad;
                 await meal.save();
             }
