@@ -9,6 +9,13 @@ async function runDailyAdminTask() {
 
   if (!config || config.date !== today) {
     console.log('Running daily task for admin login...');
+
+    
+    const mealUpdateResponse = await handleMissedMeals();
+
+    if(!mealUpdateResponse.success){
+    return {message:mealUpdateResponse.message,success:false};
+    }
     
     
     const paymentsResponse = await processMonthlyPaymentsJob();
@@ -19,11 +26,6 @@ async function runDailyAdminTask() {
     return {message:paymentsResponse.message,success:false};
     }
 
-    const mealUpdateResponse = await handleMissedMeals();
-
-    if(!mealUpdateResponse.success){
-    return {message:mealUpdateResponse.message,success:false};
-    }
 
     if (!config) {
       await SystemConfig.deleteMany({});

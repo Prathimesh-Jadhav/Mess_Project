@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const mongoSanitize = require("express-mongo-sanitize");
 const mongoose = require("mongoose");
+const {completeRegistration} = require("./controllers/membersController");
 
 
 const app = express();
@@ -11,7 +12,7 @@ const app = express();
 // Middleware
 app.options('*', cors());
 app.use(helmet()); // Security headers
-app.use(cors({ origin:process.env.CORS_ORIGIN, credentials: true })); // CORS
+app.use(cors({origin:'*'||'http://localhost:5173'||process.env.CORS_ORIGIN, credentials: true })); // CORS
 app.use(express.json()); // JSON parsing
 app.use(express.urlencoded({ extended: true })); // URL encoding
 app.use(mongoSanitize()); // Prevent NoSQL injection
@@ -45,6 +46,7 @@ app.use('/api/users',userRoutes)
 app.use('/api/meal',mealsRoutes)
 app.use('/api/menu',todaysMenu)
 app.use('/api/payments',paymentsRouter)
+app.get('/verify-email/:token', completeRegistration)
 
 
 

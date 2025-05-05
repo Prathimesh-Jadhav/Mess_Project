@@ -70,13 +70,13 @@ const Members = () => {
                 }
             });
             if (response.data.success) {
-                toast.success('Member registered successfully');
+                toast.success(response.data.message);
                 fetchMemberDashDetails(); // Refresh the data after adding a new member
             }
         }
         catch (err) {
             console.log(err);
-            toast.error('error in registering member');
+            toast.error(err.response.data.message);
         }
         setIsModalOpen(false);
     };

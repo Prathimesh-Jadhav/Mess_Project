@@ -3,6 +3,8 @@ const memberModel = require("../models/memberModel");
 const paymentsModel = require("../models/paymentsModel");
 const mealsModel = require("../models/mealsModel");
 const bcrypt = require("bcryptjs");
+const sendRegMail = require("../services/sendRegMail"); // Adjust the path as per your folder structure
+const jwt = require("jsonwebtoken");
 
 
 const registerMember = async (req, res) => {
@@ -29,19 +31,8 @@ const registerMember = async (req, res) => {
         // Hash password before saving
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Save user data
-        const newUser = new userModel({
-            name,
-            email,
-            mobileNumber,
-            password: hashedPassword,
-            role: "user",
-        });
-
-        const savedUser = await newUser.save();
-
-        // Save member data
-        const newMember = new memberModel({
+        //send a mail to the user with the password
+        const obj = {
             name,
             mobileNumber,
             status,
@@ -50,19 +41,84 @@ const registerMember = async (req, res) => {
             college,
             permanentAddress,
             hostelAddress,
+            email,
+            password: hashedPassword,
+            role: "user",
+        }
+
+        console.log("obj", obj);
+
+        const response = await sendRegMail(obj);
+
+        console.log("response", response);
+
+        if (!response.success) {
+            return res.status(500).json({
+                message: response.message || "Internal Server Error",
+                success: false,
+            });
+        }
+
+        // Send a response to the client
+        return res.status(200).json({
+            message: response.message || "Email sent successfully",
+            success: true,
+        });
+     
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal Server Error",
+            success: false,
+        });
+    }
+};
+
+const completeRegistration = async (req, res) => {
+    try {
+
+        //extract the data from the token
+        const {token} = req.params;
+        if(!token) {
+            return res.status(400).json({
+                message: "Invalid token",
+                success: false,
+            });
+        }
+
+        const body =  jwt.verify(token, process.env.JWT_SECRET);
+
+        console.log(body);
+
+        console.log("body", body);
+        
+           // Save user data
+        const newUser = new userModel({
+            name:body.name,
+            email:body.email,
+            mobileNumber: body.mobileNumber,
+            password: body.password,
+            role: "user",
+        });
+
+        const savedUser = await newUser.save();
+
+        // Save member data
+        const newMember = new memberModel({
+            name:body.name,
+            mobileNumber: body.mobileNumber,
+            status:body.status,
+            joinDate: body.joinDate, // Today's date
+            subscibedAt: body.subscibedAt, // Today's date
+            college:body.college,
+            permanentAddress: body.permanentAddress,
+            hostelAddress: body.hostelAddress,
         });
 
         const savedMember = await newMember.save();
 
-        return res.status(201).json({
-            message: "Member registered successfully",
-            success: true,
-            data: {
-                user: savedUser,
-                member: savedMember,
-            },
-        });
-    } catch (error) {
+        return res.redirect("http://localhost:5173/");
+    }
+    catch (error) {
         return res.status(500).json({
             message: error.message || "Internal Server Error",
             success: false,
@@ -147,4 +203,4 @@ const deleteMember = async (req, res) => {
 
 
 
-module.exports = { registerMember,getMemberDetails,getAllMembers,updateMembers,deleteMember };
+module.exports = { registerMember,getMemberDetails,getAllMembers,updateMembers,deleteMember,completeRegistration };

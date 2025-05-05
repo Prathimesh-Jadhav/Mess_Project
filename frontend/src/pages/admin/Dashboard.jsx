@@ -235,7 +235,7 @@ const Dashboard = () => {
       });
 
       if(response.data.success){
-        toast.success('Member registered successfully');
+        toast.success('Email sent successfully');
         setShowAddMember(false);
         setMemberData({});
         fetchMembers();

@@ -235,7 +235,7 @@ const getMealDetails = async (req, res) => {
 
 const handleMissedMeals =  async (req,res) => {
     try {
-        console.log("Running meal monitoring job at 1:00 AM...");
+        console.log("Running meal monitoring job for yesterday...");
 
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate()-1); // Subtract 1 to get yesterday
@@ -243,16 +243,30 @@ const handleMissedMeals =  async (req,res) => {
         const yesterdayString = yesterday.toISOString().split("T")[0]; // Format to YYYY-MM-DD
         console.log(yesterdayString);
 
-        const meals = await mealsModel.find({ date: yesterdayString });
+        //fetch all users 
+        const users = await User.find();
 
-        for (let meal of meals) {
-            if ((meal.totalMealsHad + meal.mealsSkipped) <2 && meal.totalMealsHad < 2) {
-                meal.mealsSkipped = 2 - meal.totalMealsHad;
-                await meal.save();
+        users.forEach(async (user) => {
+            const mobileNumber = user.mobileNumber;
+            //fetch yesterday meals of user
+            const meals = await mealsModel.findOne({ mobileNumber, date: yesterdayString });
+            if (!meals) {
+                const newMeal = new mealsModel({
+                    mobileNumber,
+                    date: yesterdayString,
+                    totalMealsHad: 0,
+                    mealsSkipped: 2
+                });
+                await newMeal.save();
+            } else {
+                if (meals.totalMealsHad < 2) {
+                    meals.mealsSkipped = 2 - meals.totalMealsHad;
+                    await meals.save();
+                }
             }
-        }
+        })
 
-      return {message:'meals Update successfully for Today',success:true}   
+      return {message:'meals Update successfully for yesterday',success:true}   
     } catch (error) {
         return {messsage:'error in updating meals',error,success:false}
     }
