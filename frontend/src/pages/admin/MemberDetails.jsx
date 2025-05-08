@@ -120,7 +120,7 @@ const MemberDetails = () => {
         const startDate = selectedMonth.split(' ')[0];
         const endDate = selectedMonth.split(' ')[2];
         try {
-            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/payments/amountPaid`, { mobileNumber: id, paidAmount: amountPaid, startDate, endDate, amount: currentBill.Due });
+            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/payments/amountPaid`, { mobileNumber: id, paidAmount: amountPaid, startDate, endDate, amount: currentBill.Due,totalMealsHad: currentBill.totalMealsHad, mealsSkipped: currentBill.mealsSkipped, totalAmount: currentBill.totalAmount, deductedAmount: currentBill.deductedAmount });
             if (response.data.success) {
                 toast.success(response.data.message);
                 fetchMemberBills(id);

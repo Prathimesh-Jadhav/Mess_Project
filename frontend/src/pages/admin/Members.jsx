@@ -48,6 +48,7 @@ const Members = () => {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/meal/fetchUserMealDetails`);
             if (response.data.success) {
                 setDashboardMemberDetails(response.data.data);
+                console.log("member details", response.data.data);
                 setSearchedData(response.data.data); // Initialize searchedData with all data
             }
             else {

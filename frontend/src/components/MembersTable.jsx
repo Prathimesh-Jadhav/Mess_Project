@@ -37,11 +37,6 @@ const MembersTable = ({ members,fetchMemberDashDetails }) => {
       key: 'mobileNumber',
     },
     {
-      title: 'Total Meals (Current Month)',
-      dataIndex: 'totalMealsHad',
-      key: 'totalMealsHad',
-    },
-    {
       title: 'Total Due',
       dataIndex: 'due',
       key: 'due',
