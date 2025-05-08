@@ -18,12 +18,11 @@ const sendRegMail = async (obj) => {
         //generate a token for the user
         const token = jwt.sign({ ...obj}, process.env.JWT_SECRET, { expiresIn: '5m' });
 
-
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: obj.email,
             subject: 'Complete your registration',
-            text: `Hello ${obj.name},\n\nPlease complete your registration by clicking the link below:\n\n ${process.env.CORS_ORIGIN}/verify-email/${token}\n\nThank you!`,
+            text: `Hello ${obj.name},\n\nPlease complete your registration by clicking the link below:\n\n http://${process.env.CORS_ORIGIN}/verify-email/${token}\n\nThank you!`,
         };
 
         await transporter.sendMail(mailOptions);
