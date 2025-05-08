@@ -113,6 +113,7 @@ const Dashboard = () => {
     let arr = [];
     for(let meal of meals){
         const member = allMembers.filter((member) => member.mobileNumber === meal.mobileNumber);
+        if(!member.length) continue;
         console.log("meal:", meal);
         console.log("member:", member);
         if(member){
