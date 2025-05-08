@@ -12,7 +12,7 @@ const app = express();
 // Middleware
 app.options('*', cors());
 app.use(helmet()); // Security headers
-app.use(cors({origin:process.env.CORS_ORIGIN, credentials: true })); // CORS
+app.use(cors({origin:'*'||process.env.CORS_ORIGIN, credentials: true })); // CORS
 app.use(express.json()); // JSON parsing
 app.use(express.urlencoded({ extended: true })); // URL encoding
 app.use(mongoSanitize()); // Prevent NoSQL injection

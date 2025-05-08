@@ -23,7 +23,7 @@ const sendRegMail = async (obj) => {
             from: process.env.EMAIL_USER,
             to: obj.email,
             subject: 'Complete your registration',
-            text: `Hello ${obj.name},\n\nPlease complete your registration by clicking the link below:\n\nhttp://localhost:3000/verify-email/${token}\n\nThank you!`,
+            text: `Hello ${obj.name},\n\nPlease complete your registration by clicking the link below:\n\n ${process.env.CORS_ORIGIN}/verify-email/${token}\n\nThank you!`,
         };
 
         await transporter.sendMail(mailOptions);

@@ -116,7 +116,7 @@ const completeRegistration = async (req, res) => {
 
         const savedMember = await newMember.save();
 
-        return res.redirect("http://localhost:5173/");
+        return res.redirect(process.env.CORS_ORIGIN);
     }
     catch (error) {
         return res.status(500).json({

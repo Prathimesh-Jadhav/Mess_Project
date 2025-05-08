@@ -3,6 +3,7 @@ const Meals = require("../models/mealsModel");
 const Payments = require("../models/paymentsModel");
 const messModel = require("../models/messModel");
 
+
 async function processMonthlyPaymentsJob() {
     let paymentsArray = [];
     try {
@@ -10,7 +11,7 @@ async function processMonthlyPaymentsJob() {
         const mess = await messModel.find({});
 
         if (!mess) {
-            return { message: "Mess not found",success:false };
+            return { message: "Mess not found", success: false };
         }
 
         const pricePerMeal = mess[0].mealRate;
@@ -78,17 +79,17 @@ async function processMonthlyPaymentsJob() {
 
             // Calculate amounts
             const totalAmount = mealsHadForPayment * Number(pricePerMeal);
-            const deductedAmount = skippedForPayments * Number(deductionPerSkippedMeal)*2;
+            const deductedAmount = skippedForPayments * Number(deductionPerSkippedMeal) * 2;
             const finalAmount = totalAmount - deductedAmount;
 
             const memberUpdate = await Member.findOneAndUpdate(
                 { mobileNumber },
-                {status:'Subscription Expired'},
+                { status: 'Subscription Expired' },
                 { new: true }
             );
 
-            if(!memberUpdate){
-                return { message: "Error updating member",success:false };
+            if (!memberUpdate) {
+                return { message: "Error updating member", success: false };
             }
 
             // Save payment record
@@ -120,7 +121,7 @@ async function processMonthlyPaymentsJob() {
 
     } catch (error) {
         console.error("Error processing payments:", error);
-        return { message: "Failed to process payments",success:false };
+        return { message: "Failed to process payments", success: false };
     }
 }
 
