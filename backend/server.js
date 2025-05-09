@@ -35,8 +35,8 @@ const userRoutes = require("./routes/userRoutes");
 const mealsRoutes = require("./routes/mealsRouter");
 const todaysMenu = require("./routes/todaysMenu");
 const paymentsRouter = require("./routes/paymentsRoute");
-const {handleMissedMeals} = require('./controllers/messController')
-const { processMonthlyPaymentsJob } = require("./services/paymentsProcessor");
+
+const paymentsModel = require("./models/paymentsModel");
 
 // app.use(handleMissedMeals)
 // app.use(processMonthlyPaymentsJob)
@@ -47,6 +47,7 @@ app.use('/api/meal',mealsRoutes)
 app.use('/api/menu',todaysMenu)
 app.use('/api/payments',paymentsRouter)
 app.get('/verify-email/:token', completeRegistration)
+
 
 
 

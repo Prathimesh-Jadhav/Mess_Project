@@ -10,19 +10,66 @@ const addMeal = async (req, res) => {
     try {
         const { mobileNumber } = req.body;
         const today = new Date().toISOString().split("T")[0];
-        
+
+        const mess = await messModel.findOne({});
+        if (!mess) {
+            return res.status(404).json({ message: "Mess not found.", success: false });
+        }
+
+        console.log("mess", mess)
 
         let meal = await Meals.findOne({ mobileNumber, date: today });
 
         if (meal) {
             if (meal.totalMealsHad >= 2) {
-                return res.json({ message: "Meal limit reached for today.",success:false });
+                return res.json({ message: "Meal limit reached for today.", success: false });
             }
-            
+
+
+            //access the member model to check the subscription status
+            const member = await membersModel.findOne({ mobileNumber, status: 'Active' });
+            if (!member) {
+                return res.status(404).json({ message: "Member not found or inactive.", success: false });
+            }
+
+
+            //access the payment model to update the total meals had
+            const payment = await paymentsModel.findOne({ mobileNumber, startDate: member.subscibedAt });
+            if (!payment) {
+                return res.status(404).json({ message: "Payment not found.", success: false });
+            }
+            payment.totalMealsCount += 1;
+            payment.amountToPay += mess.mealRate; // Assuming mealRate is the cost of one meal
+            payment.Due += mess.mealRate; // Assuming Due is the total amount due
+            payment.totalAmount += mess.mealRate; // Assuming totalAmount is the total amount paid
+            await payment.save();
+
+
             meal.totalMealsHad += 1;
             await meal.save();
-            return res.status(200).json({ message: "Meal count updated successfully.", data:meal,success:true });
+
+            return res.status(200).json({ message: "Meal count updated successfully.", data: meal, success: true });
         } else {
+
+
+            //access the member model to check the subscription status
+            const member = await membersModel.findOne({ mobileNumber, status: 'Active' });
+            if (!member) {
+                return res.status(404).json({ message: "Member not found or inactive.", success: false });
+            }
+
+
+            //access the payment model to update the total meals had
+            const payment = await paymentsModel.findOne({ mobileNumber, startDate: member.subscibedAt });
+            if (!payment) {
+                return res.status(404).json({ message: "Payment not found.", success: false });
+            }
+            payment.totalMealsHad += 1;
+            payment.amountToPay += mess.mealRate; // Assuming mealRate is the cost of one meal
+            payment.Due += mess.mealRate; // Assuming Due is the total amount due
+            payment.totalAmount += mess.mealRate; // Assuming totalAmount is the total amount paid
+            await payment.save();
+
             const newMeal = new Meals({
                 mobileNumber,
                 date: today,
@@ -30,7 +77,8 @@ const addMeal = async (req, res) => {
                 mealsSkipped: 0
             });
             await newMeal.save();
-            return res.status(201).json({ message: "New meal record created.", data: newMeal,success:true });
+
+            return res.status(201).json({ message: "New meal record created.", data: newMeal, success: true });
         }
     } catch (error) {
         console.error("Error updating meal count:", error);
@@ -39,28 +87,28 @@ const addMeal = async (req, res) => {
 };
 
 // Schedule the job to run at 12:00 AM every night
-cron.schedule("0 0 * * *", async () => {
-    try {
-        console.log("Running meal monitoring job...");
+// cron.schedule("0 0 * * *", async () => {
+//     try {
+//         console.log("Running meal monitoring job...");
 
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        yesterday.setHours(0, 0, 0, 0); // Normalize to start of the day
+//         const yesterday = new Date();
+//         yesterday.setDate(yesterday.getDate() - 1);
+//         yesterday.setHours(0, 0, 0, 0); // Normalize to start of the day
 
-        const meals = await Meals.find({ date: yesterday });
+//         const meals = await Meals.find({ date: yesterday });
 
-        for (let meal of meals) {
-            if (meal.totalMealsHad < 2) {
-                meal.mealsSkipped = 2 - meal.totalMealsHad;
-                await meal.save();
-            }
-        }
+//         for (let meal of meals) {
+//             if (meal.totalMealsHad < 2) {
+//                 meal.mealsSkipped = 2 - meal.totalMealsHad;
+//                 await meal.save();
+//             }
+//         }
 
-        console.log("Meal monitoring job completed.");
-    } catch (error) {
-        console.error("Error running meal monitoring job:", error);
-    }
-});
+//         console.log("Meal monitoring job completed.");
+//     } catch (error) {
+//         console.error("Error running meal monitoring job:", error);
+//     }
+// });
 
 const getAllMealsOfMember = async (req, res) => {
 
@@ -82,7 +130,7 @@ const getAllMeals = async (req, res) => {
     }
 };
 
-const fetchUserMealDetails = async (req,res) => {
+const fetchUserMealDetails = async (req, res) => {
     try {
         // Fetch all users
         const users = await User.find();
@@ -101,16 +149,16 @@ const fetchUserMealDetails = async (req,res) => {
             const startDate = new Date(subscribedAt);
             let endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + 30);
-            
+
             // Fetch meal records within the 30-day range
             const meals = await Meals.find({
                 mobileNumber,
                 date: { $gte: startDate.toISOString().split('T')[0], $lte: endDate.toISOString().split('T')[0] },
-            });    
+            });
 
             // Calculate totalMealsHad
             const totalMealsHad = meals.reduce((sum, meal) => sum + meal.totalMealsHad, 0);
-            
+
 
             // Fetch all payment records
             const payments = await paymentsModel.find({ mobileNumber });
@@ -126,12 +174,12 @@ const fetchUserMealDetails = async (req,res) => {
             }
 
             const messDetails = await messModel.findOne();
-            if(!messDetails){
+            if (!messDetails) {
                 return res.status(500).json({ message: 'Error fetching mess details', success: false });
             }
 
 
-            const totalAmount =  totalPaidAmount;
+            const totalAmount = totalPaidAmount;
 
             // Store user details
             userDetails.push({
@@ -154,13 +202,13 @@ const getTotalDueForMembers = async (req, res) => {
     try {
         const members = await membersModel.find();
         let result = [];
-        
+
         for (let member of members) {
             const totalDue = await paymentsModel.aggregate([
                 { $match: { mobileNumber: member.mobileNumber } },
                 { $group: { _id: "$mobileNumber", totalDue: { $sum: "$Due" } } }
             ]);
-            
+
             result.push({
                 name: member.name,
                 mobileNumber: member.mobileNumber,
@@ -170,7 +218,7 @@ const getTotalDueForMembers = async (req, res) => {
                 due: totalDue.length > 0 ? totalDue[0].totalDue : 0
             });
         }
-        
+
         return res.json({ data: result, success: true });
     } catch (error) {
         console.error("Error fetching total due for members:", error);
@@ -178,7 +226,7 @@ const getTotalDueForMembers = async (req, res) => {
     }
 };
 
-   // Meals model
+// Meals model
 
 const getMealDetails = async (req, res) => {
     try {
@@ -206,7 +254,7 @@ const getMealDetails = async (req, res) => {
         // Process meals to check skipped pattern
         for (let i = 0; i < meals.length; i++) {
             totalMealsHad += meals[i].totalMealsHad;
-            
+
             if (meals[i].mealsSkipped > 0) {
                 skippedCount++;
             } else {
@@ -217,13 +265,15 @@ const getMealDetails = async (req, res) => {
 
         // Return the required data
         return res.status(200).json({
-            data:{name: member.name,
-            mobileNumber: member.mobileNumber,
-            joinDate: member.joinDate,
-            startDate: member.subscibedAt,
-            totalMealsHad,
-            mealsSkippedContinuously:skippedCount,
-            status: member.status},
+            data: {
+                name: member.name,
+                mobileNumber: member.mobileNumber,
+                joinDate: member.joinDate,
+                startDate: member.subscibedAt,
+                totalMealsHad,
+                mealsSkippedContinuously: skippedCount,
+                status: member.status
+            },
             success: true
         });
 
@@ -233,18 +283,18 @@ const getMealDetails = async (req, res) => {
     }
 }
 
-const handleMissedMeals =  async (req,res) => {
+const handleMissedMeals = async (req, res) => {
     try {
         console.log("Running meal monitoring job for yesterday...");
 
         const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate()-1); // Subtract 1 to get yesterday
+        yesterday.setDate(yesterday.getDate() - 1); // Subtract 1 to get yesterday
         yesterday.setHours(0, 0, 0, 0); // Normalize to start of the day
         const yesterdayString = yesterday.toISOString().split("T")[0]; // Format to YYYY-MM-DD
         console.log(yesterdayString);
 
         //fetch all users 
-        const users = await User.find();
+        const users = await membersModel.find({status:'Active'});
 
         users.forEach(async (user) => {
             const mobileNumber = user.mobileNumber;
@@ -266,9 +316,9 @@ const handleMissedMeals =  async (req,res) => {
             }
         })
 
-      return {message:'meals Update successfully for yesterday',success:true}   
+        return { message: 'meals Update successfully for yesterday', success: true }
     } catch (error) {
-        return {messsage:'error in updating meals',error,success:false}
+        return { messsage: 'error in updating meals', error, success: false }
     }
 
 }
@@ -276,4 +326,4 @@ const handleMissedMeals =  async (req,res) => {
 
 
 
-module.exports = { addMeal,getAllMeals,fetchUserMealDetails,getTotalDueForMembers,getMealDetails,getAllMealsOfMember,handleMissedMeals };
+module.exports = { addMeal, getAllMeals, fetchUserMealDetails, getTotalDueForMembers, getMealDetails, getAllMealsOfMember, handleMissedMeals };

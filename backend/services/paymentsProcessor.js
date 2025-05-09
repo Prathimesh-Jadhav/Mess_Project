@@ -7,6 +7,7 @@ const messModel = require("../models/messModel");
 async function processMonthlyPaymentsJob() {
     let paymentsArray = [];
     try {
+
         //get price 
         const mess = await messModel.find({});
 
@@ -14,59 +15,56 @@ async function processMonthlyPaymentsJob() {
             return { message: "Mess not found", success: false };
         }
 
-        const pricePerMeal = mess[0].mealRate;
-        const deductionPerSkippedMeal = mess[0].mealRate;
-        const today = new Date();
-        const monthRange = today.toLocaleString("default", { month: "long", year: "numeric" }); // "April 2025"
+        //find the members whose status is Active
+        const membersData = await Member.find({ status: 'Active' });
 
-        // Get members who have completed 30 days
-        const members = await Member.find({
-            subscibedAt: { $lte: new Date(today.setDate(today.getDate() - 30)).toISOString().split("T")[0] },
-        });
+        if (!membersData) {
+            return { message: "No active members found", success: false };
+        }
 
-        for (let member of members) {
-            const { mobileNumber, subscibedAt } = member;
 
-            // Define the billing period (30 days from subscription)
-            const startDate = new Date(subscibedAt);
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + 30);
-
-            // Check if payment is already recorded for this range
-            const existingPayment = await Payments.findOne({
-                mobileNumber,
-                startDate: startDate.toISOString().split("T")[0],
-                endDate: endDate.toISOString().split("T")[0],
-            });
-
-            if (existingPayment) {
-                console.log(`Payment already processed for ${mobileNumber} for ${monthRange}. Skipping...`);
-                continue; // Skip processing for this user
+        // access each member's mobile number and update the endDate to todays date
+        for (let member of membersData) {
+            const { mobileNumber } = member;
+            const payments = await Payments.find({ mobileNumber , startDate: member.subscibedAt });
+            if (payments.length > 0) {
+                const payment = payments[0];
+                const updatedPayment = await Payments.findOneAndUpdate(
+                    { mobileNumber, startDate: member.subscibedAt },
+                    { endDate: new Date().toISOString().split("T")[0] },
+                    { new: true }
+                );
+            }
+            else{
+                continue;
             }
 
-            // Fetch meals for the last 30 days
-            const meals = await Meals.find({
-                mobileNumber,
-                date: { $gte: startDate.toISOString().split("T")[0], $lte: endDate.toISOString().split("T")[0] }
-            });
+            //calculate the number of days between startDate and endDate
+            const startDate = new Date(member.subscibedAt);
+            const endDate = new Date(new Date().toISOString().split("T")[0]);
+            const timeDiff = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); // days
 
-            //sort the meals by date
-            meals.sort((a, b) => new Date(a.date) - new Date(b.date));
+            // calculate the number of meals had 
+            const totalMealsCount = diffDays * 2; // 2 meals per day
+            const totalAmountForPayment = totalMealsCount *mess[0].mealRate; // total amount for payment
 
-            let totalMealsHad = 0;
-            let totalMealsSkipped = 0;
-            let consecutiveSkipped = 0;
+            //calculate the number of consecutive meals skipped between startDate and endDate for four consecutive days
+            const meals = await Meals.find({ mobileNumber, date: { $gte: member.subscibedAt, $lte: new Date().toISOString().split("T")[0] } });
+            if (!meals) {
+                return { message: "No meals found", success: false };
+            }
+            let consecutiveSkippedMeals = 0;
+            let skippedMeals = 0;
+            let mealsHad = 0;
+            let mealsHadForPayment = 0;
             let skippedForPayments = 0;
-            let mealsHadForPayment = 60;
-
+            let consecutiveSkipped = 0;
             for (let meal of meals) {
-                totalMealsHad += meal.totalMealsHad;
-                totalMealsSkipped += meal.mealsSkipped;
-
-                // Count consecutive skipped meals
                 if (meal.mealsSkipped > 1) {
                     consecutiveSkipped += meal.mealsSkipped;
-                } else {// Count meals had
+                } else {
+                    mealsHad += meal.totalMealsHad;
                     consecutiveSkipped = 0; // Reset counter if a meal is had
                 }
 
@@ -77,46 +75,31 @@ async function processMonthlyPaymentsJob() {
                 }
             }
 
-            // Calculate amounts
-            const totalAmount = mealsHadForPayment * Number(pricePerMeal);
-            const deductedAmount = skippedForPayments * Number(deductionPerSkippedMeal) * 2;
-            const finalAmount = totalAmount - deductedAmount;
-
-            const memberUpdate = await Member.findOneAndUpdate(
-                { mobileNumber },
-                { status: 'Subscription Expired' },
+            const deductedAmount = skippedForPayments * Number(mess[0].mealRate) * 2; // 2 meals per day
+            const paidAmount = payments[0].paidAmount; // get the paid amount from the payment record
+        
+            //update the payment record with the new values
+            const updatedPayment = await Payments.findOneAndUpdate(
+                { mobileNumber, startDate: member.subscibedAt },
+                {
+                    totalMealsHad: totalMealsCount,
+                    totalAmount: totalAmountForPayment,
+                    deductedAmount,
+                    mealsSkipped: skippedForPayments,
+                    amountToPay: totalAmountForPayment - deductedAmount,
+                    Due: totalAmountForPayment - deductedAmount - paidAmount,
+                },
                 { new: true }
             );
 
-            if (!memberUpdate) {
-                return { message: "Error updating member", success: false };
+            if (!updatedPayment) {
+                return { message: "Failed to update payment record", success: false };
             }
 
-            // Save payment record
-            paymentsArray.push(
-                {
-                    mobileNumber,
-                    totalMealsHad: mealsHadForPayment,
-                    startDate: startDate.toISOString().split("T")[0],
-                    totalAmount: totalAmount,
-                    endDate: endDate.toISOString().split("T")[0],
-                    deductedAmount,
-                    mealsSkipped: skippedForPayments,
-                    amountToPay: finalAmount,
-                    Due: finalAmount,
-                    paidAmount: 0,
-                    mealRate: mess[0].mealRate,
-                }
-            )
 
-        }
-
-        if (paymentsArray.length > 0) {
-            await Payments.insertMany(paymentsArray); // Save all payments in one go
         }
 
         console.log("Payments processed successfully:", paymentsArray);
-
         return { message: "Payments processed successfully", success: true };
 
     } catch (error) {

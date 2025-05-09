@@ -39,9 +39,8 @@ const paymentSchema = new mongoose.Schema({
     deductedAmount:{
         type: Number,
     },
-    totalMealsHad:{
-        type: Number,
-        required: true,
+    totalMealsCount:{
+        type: Number, 
     }
 });
 

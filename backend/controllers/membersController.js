@@ -7,6 +7,10 @@ const sendRegMail = require("../services/sendRegMail"); // Adjust the path as pe
 const jwt = require("jsonwebtoken");
 
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * @function registerMember
+/*******  85d9ed01-5129-4dc2-8116-6ea90aaeec29  *******/
 const registerMember = async (req, res) => {
     try {
         const { name, mobileNumber, password, college, permanentAddress, hostelAddress, status,email } = req.body;
@@ -90,7 +94,32 @@ const completeRegistration = async (req, res) => {
         console.log(body);
 
         console.log("body", body);
-        
+
+        // Save payment data
+        const newPayment = new paymentsModel({
+            mobileNumber: body.mobileNumber,
+            startDate: new Date().toISOString().split("T")[0], // Today's date
+            endDate: new Date().toISOString().split("T")[0], // Today's date
+            totalAmount: 0, 
+            paidAmount: 0,
+            amountToPay: 0,
+            mealRate: 0,
+            Due: 0, 
+            mealsSkipped: 0,
+            deductedAmount: 0,
+            totalMealsHad: 0,
+        });
+
+
+        const savedPayment = await newPayment.save();
+
+        if(!savedPayment) {
+            return res.status(500).json({
+                message: "Error saving payment data",
+                success: false,
+            });
+        }
+
            // Save user data
         const newUser = new userModel({
             name:body.name,
@@ -114,9 +143,12 @@ const completeRegistration = async (req, res) => {
             hostelAddress: body.hostelAddress,
         });
 
+        console.log("newMember", newMember);
+
         const savedMember = await newMember.save();
 
         return res.redirect(process.env.CORS_ORIGIN);
+
     }
     catch (error) {
         return res.status(500).json({
@@ -200,7 +232,40 @@ const deleteMember = async (req, res) => {
     }
 };
 
+const paymentForActivateSubscription = async (req, res) => {
+    const { mobileNumber,startDate } = req.body;
+    try{
+        const payment = await paymentsModel.create({
+            mobileNumber,
+            startDate: startDate, // Today's date
+            endDate: new Date().toISOString().split("T")[0], // Today's date
+            totalAmount: 0, 
+            paidAmount: 0,
+            amountToPay: 0,
+            mealRate: 0,
+            Due: 0, 
+            mealsSkipped: 0,
+            deductedAmount: 0,
+            totalMealsHad: 0,
+        })
+        if(!payment) {
+            return res.status(500).json({
+                message: "Error saving payment data",
+                success: false,
+            });
+        }
+        return res.status(200).json({
+            message: "Payment data saved successfully",
+            success: true,
+        });
+    }
+    catch(error){
+        console.error('Error activating subscription:', error);
+        return res.status(500).json({ message: 'Error activating subscription', error, success: false });
+    }
+}
 
 
 
-module.exports = { registerMember,getMemberDetails,getAllMembers,updateMembers,deleteMember,completeRegistration };
+
+module.exports = { registerMember,getMemberDetails,getAllMembers,updateMembers,deleteMember,completeRegistration,paymentForActivateSubscription };
