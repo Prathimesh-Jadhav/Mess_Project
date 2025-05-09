@@ -117,7 +117,7 @@ const getPaymentDetails = async (req, res) => {
         const payments = await paymentsModel.find({ mobileNumber });
         const currentMonthBill = await currentMonth(mobileNumber)
 
-        console.log(currentMonthBill)
+        console.log("currentMonthBill", currentMonthBill)
 
         if (currentMonthBill.length > 0) {
             payments.unshift(...currentMonthBill)
@@ -188,7 +188,7 @@ const handleAmountPaid = async (req, res) => {
                 if (!newPayment) {
                     return res.status(404).json({ message: 'Error creating payment details', success: false });
                 }
-                
+
                 return res.status(200).json({ data: newPayment, success: true });
             }
         }

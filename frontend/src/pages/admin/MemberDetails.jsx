@@ -36,6 +36,7 @@ const MemberDetails = () => {
         try {
             // Replace this with your actual API endpoint
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/payments/paymentDetails`, { mobileNumber: id });
+            console.log(response.data.data)
             if (response.data.success) {
                 setMonthlyBills(response.data.data);
 
@@ -47,6 +48,7 @@ const MemberDetails = () => {
                 setBillOptions(sortedBills);
                 // Set the most recent bill as default
                 if (response.data.data.length > 0) {
+                    console.log("sortedBills:",sortedBills)
                     setSelectedMonth(`${sortedBills[0]?.startDate?.split('T')[0]} - ${sortedBills[0]?.endDate?.split('T')[0]}`);
                     setCurrentBill(sortedBills[0]);
                 }
@@ -101,6 +103,11 @@ const MemberDetails = () => {
 
     const activateSubscription = async () => {
         try {
+            const createPayment = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/members/createPayment`, { mobileNumber: id, startDate: new Date().toISOString().split('T')[0], endDate: new Date().toISOString().split('T')[0], totalAmount: 0, paidAmount: 0, amountToPay: 0, mealRate: 0, Due: 0, mealsSkipped: 0, deductedAmount: 0 });
+            if (!createPayment.data.success) {
+                toast.error('error in creating payment record')
+                return;
+            }
             const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/members/updateMembers`, { mobileNumber: id, status: 'Active', subscibedAt: new Date().toISOString().split('T')[0] });
             if (response.data.success) {
                 toast.success('subscription activated successfully');
@@ -110,7 +117,7 @@ const MemberDetails = () => {
         }
         catch (err) {
             console.log(err);
-            toast.error('error in activating subscription');
+            toast.error(err.response.data.message);
         }
     }
 
@@ -221,7 +228,7 @@ const MemberDetails = () => {
                                 <div className='mt-4 pb-16'>
                                     <div className='flex justify-between items-center p-2 border-b-[1px] border-gray-200 gap-4'>
                                         <p>Total Meals of this Month</p>
-                                        <p>{currentBill.totalMealsHad}</p>
+                                        <p>{currentBill.totalMealsCount}</p>
                                     </div>
                                     <div className='flex justify-between items-center p-2 border-b-[1px] bg-green-100 gap-4'>
                                         <p>Total Amount</p>
