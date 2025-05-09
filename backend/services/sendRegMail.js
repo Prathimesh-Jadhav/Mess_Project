@@ -22,7 +22,7 @@ const sendRegMail = async (obj) => {
             from: process.env.EMAIL_USER,
             to: obj.email,
             subject: 'Complete your registration',
-            text: `Hello ${obj.name},\n\nPlease complete your registration by clicking the link below:\n\n http://localhost:3000/verify-email/${token}\n\nThank you!`,
+            text: `Hello ${obj.name},\n\nPlease complete your registration by clicking the link below:\n\n https://mess-project-3os8.onrender.com/verify-email/${token}\n\nThank you!`,
         };
 
         await transporter.sendMail(mailOptions);
